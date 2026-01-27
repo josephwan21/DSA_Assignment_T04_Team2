@@ -3,7 +3,10 @@
 #include <sstream>
 
 // --- Student B Tasks: File I/O & Transactions ---
-
+ClubManager::ClubManager()
+{
+	// Constructor implementation (if needed)
+}
 // Student B ToDo: Read games.csv line by line using stringstream
 void ClubManager::loadData(string filename) 
 {
@@ -43,6 +46,27 @@ void ClubManager::borrowGame(string mID, string gName)
     // 1. memberTable.getMember(mID)
     // 2. allGames.find(gName)
     // 3. Update 'isBorrowed' status and dates
+    Member* m = memberTable.getMember(mID);
+    if (!m) {
+        cout << "Member not found!\n";
+        return;
+    }
+
+    Game* g = allGames.find(gName);
+    if (!g) {
+        cout << "Game not found!\n";
+        return;
+    }
+
+    if (g->getIsBorrowed()) {
+        cout << "Game already borrowed!\n";
+        return;
+    }
+
+    g->setIsBorrowed(true);
+    m->borrowGame(gName);
+    cout << "Success! " << mID << " borrowed " << gName << endl;
+
 }
 
 // --- Student C Tasks: Sorting & Filtering ---
