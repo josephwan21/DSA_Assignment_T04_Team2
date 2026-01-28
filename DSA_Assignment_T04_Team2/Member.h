@@ -12,6 +12,7 @@ public:
     Member();
     Member(string id, string n);
     string getID();
+    string getName();
 };
 
 struct HashNode {

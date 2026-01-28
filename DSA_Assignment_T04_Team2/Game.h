@@ -10,11 +10,34 @@ private:
     int minPlayers, maxPlayers, minPlaytime, maxPlaytime, yearPublished;
     double avgRating;
     bool isBorrowed;
-    // ... other attributes
+    int ratingCount;      // Number of ratings
+    double totalRating;   // Sum of ratings
 public:
     Game();
     Game(string n, int minP, int maxP, int minT, int maxT, int year);
     // Student A ToDo: Add Getters/Setters for all attributes
+
+    // Getters
+    string getName();
+    int getMinPlayers();
+    int getMaxPlayers();
+    int getMinPlaytime();
+    int getMaxPlaytime();
+    int getYearPublished();
+    double getAvgRating();
+    bool getIsBorrowed();
+
+    // Setters
+    void setName(string n);
+    void setMinPlayers(int p);
+    void setMaxPlayers(int p);
+    void setMinPlaytime(int t);
+    void setMaxPlaytime(int t);
+    void setYearPublished(int y);
+    void setIsBorrowed(bool status);
+
+    // Rating functions
+    void addRating(int score);
     void display();
 };
 
