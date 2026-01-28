@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <iostream>
+Game::Game() {}
 
 // Student A ToDo: Constructor to initialize game details
 Game::Game(string n, int minP, int maxP, int minT, int maxT, int year) {
