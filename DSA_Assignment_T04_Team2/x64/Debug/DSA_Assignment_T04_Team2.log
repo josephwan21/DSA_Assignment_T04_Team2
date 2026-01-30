@@ -1,2 +1,6 @@
-﻿DSA_Assignment_T04_Team2.obj : error LNK2019: unresolved external symbol "public: __cdecl ClubManager::ClubManager(void)" (??0ClubManager@@QEAA@XZ) referenced in function main
-C:\Users\Lenovo\Downloads\DSA assignment\x64\Debug\DSA_Assignment_T04_Team2.exe : fatal error LNK1120: 1 unresolved externals
+﻿  ClubManager.cpp
+  DSA_Assignment_T04_Team2.cpp
+  Game.cpp
+  Member.cpp
+  Generating Code...
+  DSA_Assignment_T04_Team2.vcxproj -> C:\Users\Jayme Chua\Desktop\Ngee Ann Poly\Y3S2\DSA\DSA_Assignment_T04_Team2\x64\Debug\DSA_Assignment_T04_Team2.exe
