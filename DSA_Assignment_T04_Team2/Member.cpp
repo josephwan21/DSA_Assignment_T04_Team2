@@ -15,6 +15,10 @@ string Member::getName() {
     return name;
 }
 
+void Member::borrowGame(string gameName) {
+    borrowedGames.push_back(gameName);
+}
+
 // --- MemberHash Implementation (Data Structure 2: Hash Table) ---
 
 MemberHash::MemberHash() 

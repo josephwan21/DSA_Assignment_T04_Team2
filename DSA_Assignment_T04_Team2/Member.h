@@ -1,18 +1,21 @@
 #ifndef MEMBER_H
 #define MEMBER_H
 #include <string>
+#include <vector>
 using namespace std;
 
 class Member {
 private:
     string memberID;
     string name;
+    vector<string> borrowedGames;
     // Student A ToDo: A simple array or list to store borrowed game names
 public:
     Member();
     Member(string id, string n);
     string getID();
     string getName();
+    void borrowGame(string gameName);
 };
 
 struct HashNode {
