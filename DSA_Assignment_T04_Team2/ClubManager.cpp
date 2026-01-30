@@ -5,10 +5,10 @@
 // --- Student B Tasks: File I/O & Transactions ---
 ClubManager::ClubManager()
 {
-	// Constructor implementation (if needed)
+    // Constructor implementation (if needed)
 }
 // Student B ToDo: Read games.csv line by line using stringstream
-void ClubManager::loadData(string filename) 
+void ClubManager::loadData(string filename)
 {
     // 1. Open file using ifstream
     // 2. Loop through lines, split by comma
@@ -41,7 +41,7 @@ void ClubManager::loadData(string filename)
 }
 
 // Student B ToDo: Update game status and member's borrowed list
-void ClubManager::borrowGame(string mID, string gName) 
+void ClubManager::borrowGame(string mID, string gName)
 {
     // 1. memberTable.getMember(mID)
     // 2. allGames.find(gName)
@@ -72,7 +72,7 @@ void ClubManager::borrowGame(string mID, string gName)
 // --- Student C Tasks: Sorting & Filtering ---
 
 // Student C ToDo: Implement a Sorting Algorithm (Data Structure 3: Array for Sorting)
-void ClubManager::displaySortedByYear() 
+void ClubManager::displaySortedByYear()
 {
     // 1. Copy GameList into a temporary Game array[size]
     // 2. Perform QuickSort or BubbleSort on the array by yearPublished
@@ -80,7 +80,7 @@ void ClubManager::displaySortedByYear()
 }
 
 // Student C ToDo: Filter and display games for a specific player count
-void ClubManager::searchByPlayers(int count) 
+void ClubManager::searchByPlayers(int count)
 {
     // Traverse GameList and print games where min <= count <= max
 }
