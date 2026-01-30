@@ -1,9 +1,16 @@
 #include "ClubManager.h"
 #include <iostream>
+#include <string>
+#include "ClubManager.h"
 
-int main() {
-    ClubManager manager;
-    manager.loadData("games.csv");
+using namespace std;
+
+int main()
+{
+    cout << "Hello World!\n";
+    ClubManager cm;
+    cm.loadData("games.csv");
+}
 
     // Student C ToDo: Implement the Menu System
     // Choice 1: Administrator -> (Add Game, Remove Member, Summary)

@@ -17,8 +17,10 @@ string Member::getName() {
 
 // --- MemberHash Implementation (Data Structure 2: Hash Table) ---
 
-MemberHash::MemberHash() {
-    for (int i = 0; i < MAX_SIZE; i++) table[i] = nullptr;
+MemberHash::MemberHash() 
+{
+    for (int i = 0; i < MAX_SIZE; i++) 
+        table[i] = nullptr;
 }
 
 // Student A ToDo: Implement a hash function (e.g., sum of ASCII % MAX_SIZE)
