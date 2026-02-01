@@ -153,10 +153,12 @@ void handleRemoveGame(ClubManager& manager) {
 }
 
 void handleAddMember(ClubManager& manager) {
-    string mID, mName;
-    cout << "Enter member ID: "; cin >> mID;
+    string mName;
     cin.ignore();
-    cout << "Enter member name: "; getline(cin, mName);
+    cout << "Enter member name: "; 
+    getline(cin, mName);
+    string mID = manager.generateMemberID();
     Member m(mID, mName);
     manager.addMember(m);
+    cout << "Generated Member ID: " << mID << endl;
 }

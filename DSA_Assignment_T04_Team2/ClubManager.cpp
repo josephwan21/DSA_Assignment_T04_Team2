@@ -5,7 +5,7 @@
 // --- Student B Tasks: File I/O & Transactions ---
 ClubManager::ClubManager()
 {
-    // Constructor implementation (if needed)
+    nextMemberNo = 1000;
 }
 // Student B ToDo: Read games.csv line by line using stringstream
 void ClubManager::loadData(string filename)
@@ -104,4 +104,8 @@ void ClubManager::addMember(Member m) {
 void ClubManager::removeGame(string gName) {
     allGames.remove(gName);
     cout << "Game removed successfully.\n";
+}
+
+string ClubManager::generateMemberID() {
+    return "M" + to_string(nextMemberNo++);
 }
