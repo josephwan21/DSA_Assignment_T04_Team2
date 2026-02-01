@@ -1,17 +1,26 @@
 #include "Game.h"
 #include <iostream>
-Game::Game() {}
-
-// Student A ToDo: Constructor to initialize game details
-Game::Game(string n, int minP, int maxP, int minT, int maxT, int year) {
+Game::Game() {
     name = "";
     minPlayers = maxPlayers = 0;
     minPlaytime = maxPlaytime = 0;
     yearPublished = 0;
     avgRating = 0;
-    isBorrowed = false;
     ratingCount = 0;
     totalRating = 0;
+    isBorrowed = false;
+}
+
+// Student A ToDo: Constructor to initialize game details
+Game::Game(string n, int minP, int maxP, int minT, int maxT, int year, double r, bool borrowed) {
+    name = "";
+    minPlayers = maxPlayers = 0;
+    minPlaytime = maxPlaytime = 0;
+    yearPublished = year;
+    avgRating = r;
+    isBorrowed = false;
+    ratingCount = r > 0 ? 1 : 0;
+    totalRating = r;
 }
 
 // Getters
@@ -48,6 +57,8 @@ void Game::display() {
     cout << "Playtime: " << minPlaytime << "-" << maxPlaytime << " mins" << endl;
     cout << "Year: " << yearPublished << endl;
     cout << "Average Rating: " << avgRating << "/10" << endl;
+    if (ratingCount == 0) cout << " (No ratings yet)";
+    cout << endl;
     cout << "Status: " << (isBorrowed ? "Borrowed" : "Available") << endl;
 }
 
@@ -106,5 +117,34 @@ Game* GameList::find(string name) {
     return nullptr;
 }
 
+// Find first available copy for borrowing
+Game* GameList::findAvailableCopy(string name) {
+    GameNode* temp = head;
+    while (temp) {
+        if (temp->data.getName() == name && !temp->data.getIsBorrowed())
+            return &(temp->data);
+        temp = temp->next;
+    }
+    return nullptr;
+}
+
+// Find first borrowed copy for returning
+Game* GameList::findBorrowedCopy(string name) {
+    GameNode* temp = head;
+    while (temp) {
+        if (temp->data.getName() == name && temp->data.getIsBorrowed())
+            return &(temp->data);
+        temp = temp->next;
+    }
+    return nullptr;
+}
+
 // Student A ToDo: Destructor to delete all nodes and prevent memory leaks
-GameList::~GameList() { /* delete nodes */ }
+GameList::~GameList() {
+    GameNode* temp = head;
+    while (temp) {
+        GameNode* next = temp->next;
+        delete temp;
+        temp = next;
+    }
+}
