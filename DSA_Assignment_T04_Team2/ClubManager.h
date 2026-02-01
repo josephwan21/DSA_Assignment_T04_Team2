@@ -16,6 +16,10 @@ public:
     void loadData(string filename);
     // Student B ToDo: Implementation for Borrow/Return logic
     void borrowGame(string mID, string gName);
+    void addGame(Game g);
+    void addMember(Member m);
+    void removeGame(string gName);
+    void returnGame(string mID, string gName);
 
     // --- Student C Tasks (Search, Sort, Ratings) ---
     // Student C ToDo: Copy GameList to a temporary Array and implement MergeSort or QuickSort

@@ -14,7 +14,7 @@ private:
     double totalRating;   // Sum of ratings
 public:
     Game();
-    Game(string n, int minP, int maxP, int minT, int maxT, int year);
+    Game(string n, int minP, int maxP, int minT, int maxT, int year, double r, bool borrowed);
     // Student A ToDo: Add Getters/Setters for all attributes
 
     // Getters
@@ -58,5 +58,7 @@ public:
     void remove(string name);
     // Student A ToDo: Find a game by name (Linear Search)
     Game* find(string name);
+    Game* findAvailableCopy(string name); // Find first available copy
+    Game* findBorrowedCopy(string name);  // Find first borrowed copy
 };
 #endif

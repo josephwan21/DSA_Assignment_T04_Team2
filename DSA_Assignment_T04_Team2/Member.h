@@ -1,14 +1,15 @@
 #ifndef MEMBER_H
 #define MEMBER_H
 #include <string>
-#include <vector>
 using namespace std;
 
 class Member {
 private:
     string memberID;
     string name;
-    vector<string> borrowedGames;
+    static const int MAX_BORROWED = 5;
+    string borrowedGames[MAX_BORROWED];
+    int borrowedCount;
     // Student A ToDo: A simple array or list to store borrowed game names
 public:
     Member();
