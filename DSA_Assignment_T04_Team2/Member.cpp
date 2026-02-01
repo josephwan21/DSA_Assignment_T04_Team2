@@ -16,7 +16,10 @@ string Member::getName() {
 }
 
 void Member::borrowGame(string gameName) {
-    borrowedGames.push_back(gameName);
+    if (borrowedCount < MAX_BORROWED) {
+        borrowedGames[borrowedCount] = gameName;
+        borrowedCount++;
+    }
 }
 
 // --- MemberHash Implementation (Data Structure 2: Hash Table) ---
