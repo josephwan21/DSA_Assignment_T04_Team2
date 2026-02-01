@@ -22,17 +22,23 @@ void ClubManager::loadData(string filename)
     string line;
     while (getline(file, line)) {
         stringstream ss(line);
-        string name;
+        string name, borrowedDate, returnDate;
         int minP, maxP, minT, maxT, year;
+        double rating;
 
         getline(ss, name, ',');
         ss >> minP; ss.ignore();
         ss >> maxP; ss.ignore();
         ss >> minT; ss.ignore();
         ss >> maxT; ss.ignore();
-        ss >> year;
+        ss >> year; ss.ignore();
+        ss >> rating; ss.ignore();
+        getline(ss, borrowedDate, ',');
+        getline(ss, returnDate, ',');
 
-        Game g(name, minP, maxP, minT, maxT, year);
+        bool isBorrowed = !borrowedDate.empty();
+
+        Game g(name, minP, maxP, minT, maxT, year, rating, isBorrowed);
         allGames.add(g);
     }
 
@@ -83,4 +89,19 @@ void ClubManager::displaySortedByYear()
 void ClubManager::searchByPlayers(int count)
 {
     // Traverse GameList and print games where min <= count <= max
+}
+
+void ClubManager::addGame(Game g) {
+    allGames.add(g);
+    cout << "Game added successfully.\n";
+}
+
+void ClubManager::addMember(Member m) {
+    memberTable.addMember(m);
+    cout << "Member added successfully.\n";
+}
+
+void ClubManager::removeGame(string gName) {
+    allGames.remove(gName);
+    cout << "Game removed successfully.\n";
 }
