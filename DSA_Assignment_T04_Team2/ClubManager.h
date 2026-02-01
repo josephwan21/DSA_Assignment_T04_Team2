@@ -7,6 +7,7 @@ class ClubManager {
 private:
     GameList allGames;       // Managed by Student A's Linked List
     MemberHash memberTable;  // Managed by Student A's Hash Table
+    int nextMemberNo;
 
 public:
     ClubManager();
@@ -26,5 +27,6 @@ public:
     void displaySortedByYear();
     // Student C ToDo: Implementation of player count filtering
     void searchByPlayers(int count);
+    string generateMemberID();
 };
 #endif
