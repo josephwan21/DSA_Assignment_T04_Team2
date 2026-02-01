@@ -11,10 +11,16 @@ void displayAdminMenu();
 void displayMemberMenu();
 void clearInput();
 
+// Admin actions
+void handleAddGame(ClubManager& manager);
+void handleRemoveGame(ClubManager& manager);
+void handleAddMember(ClubManager& manager);
+
 int main() {
     ClubManager manager;
 
     // // Student B ToDo: manager.loadData("games.csv");
+    manager.loadData("games.csv");
 
     int mainChoice = 0;
     bool running = true;
@@ -32,12 +38,15 @@ int main() {
             switch (adminChoice) {
             case 1:
                 // // Student A ToDo: manager.addGame(newGame);
+                handleAddGame(manager);
                 break;
             case 2:
                 // // Student A ToDo: manager.removeGame(gameName);
+                handleRemoveGame(manager);
                 break;
             case 3:
                 // // Student A ToDo: manager.addMember(newMember);
+                handleAddMember(manager);
                 break;
             case 4:
                 // // Student B ToDo: manager.displayAdminSummary();
@@ -116,4 +125,38 @@ void clearInput() {
     cin.clear();
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cout << "Invalid input. Please try again." << endl;
+}
+
+// ---------- Admin Functions ----------
+void handleAddGame(ClubManager& manager) {
+    string name;
+    int minP, maxP, minT, maxT, year;
+
+    cin.ignore();
+    cout << "Enter game name: "; getline(cin, name);
+    cout << "Min players: "; cin >> minP;
+    cout << "Max players: "; cin >> maxP;
+    cout << "Min playtime: "; cin >> minT;
+    cout << "Max playtime: "; cin >> maxT;
+    cout << "Year published: "; cin >> year;
+
+    Game g(name, minP, maxP, minT, maxT, year, 0, false);
+    manager.addGame(g);
+}
+
+void handleRemoveGame(ClubManager& manager) {
+    cin.ignore();
+    string gameName;
+    cout << "Enter game name to remove: ";
+    getline(cin, gameName);
+    manager.removeGame(gameName);
+}
+
+void handleAddMember(ClubManager& manager) {
+    string mID, mName;
+    cout << "Enter member ID: "; cin >> mID;
+    cin.ignore();
+    cout << "Enter member name: "; getline(cin, mName);
+    Member m(mID, mName);
+    manager.addMember(m);
 }
