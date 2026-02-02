@@ -75,6 +75,60 @@ void ClubManager::borrowGame(string mID, string gName)
 
 }
 
+
+void ClubManager::returnGame(string mID, string gName) {
+    Member* m = memberTable.getMember(mID);
+    if (!m) {
+        cout << "Member not found!\n";
+        return;
+    }
+
+    Game* g = allGames.findBorrowedCopy(gName);
+    if (!g) {
+        cout << "No borrowed copy found!\n";
+        return;
+    }
+
+    g->setIsBorrowed(false);
+    cout << "Game returned successfully.\n";
+}
+
+//Add new function
+void ClubManager::displayAdminSummary() {
+    int borrowed = 0, available = 0;
+
+    GameNode* temp = allGames.get();  // or make head accessible via getter
+    while (temp) {
+        if (temp->data.getIsBorrowed())
+            borrowed++;
+        else
+            available++;
+        temp = temp->next;
+    }
+
+    cout << "\n--- Admin Summary ---\n";
+    cout << "Borrowed games: " << borrowed << endl;
+    cout << "Available games: " << available << endl;
+}
+
+//Add new function
+void ClubManager::displayMemberSummary(string mID) {
+    Member* m = memberTable.getMember(mID);
+
+    if (m == nullptr) {
+        cout << "Member not found.\n";
+        return;
+    }
+
+    cout << "\n--- Member Summary ---\n";
+    cout << "Member ID: " << m->getID() << endl;
+    cout << "Name: " << m->getName() << endl;
+
+    m->displayBorrowedGames();  // delegated to Member class
+}
+
+
+
 // --- Student C Tasks: Sorting & Filtering ---
 
 // Student C ToDo: Implement a Sorting Algorithm (Data Structure 3: Array for Sorting)

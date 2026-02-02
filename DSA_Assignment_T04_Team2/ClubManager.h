@@ -21,6 +21,9 @@ public:
     void addMember(Member m);
     void removeGame(string gName);
     void returnGame(string mID, string gName);
+    void displayAdminSummary();
+    void displayMemberSummary(string mID);
+	void saveGames(string filename);
 
     // --- Student C Tasks (Search, Sort, Ratings) ---
     // Student C ToDo: Copy GameList to a temporary Array and implement MergeSort or QuickSort
