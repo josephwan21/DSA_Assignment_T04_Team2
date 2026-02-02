@@ -1,11 +1,22 @@
 #include "Member.h"
+#include <iostream>
+using namespace std;
 
 Member::Member() {
     memberID = "";
     name = "";
+    borrowedCount = 0;
+    for (int i = 0; i < MAX_BORROWED; i++)
+        borrowedGames[i] = "";
 }
 
-Member::Member(string id, string n) : memberID(id), name(n) {}
+Member::Member(string id, string n) {
+    memberID = id;
+    name = n;
+    borrowedCount = 0;
+    for (int i = 0; i < MAX_BORROWED; i++)
+        borrowedGames[i] = "";
+}
 
 string Member::getID() {
     return memberID;
@@ -63,4 +74,31 @@ Member* MemberHash::getMember(string id) {
         temp = temp->next;
     }
     return nullptr; //if member not found
+}
+
+// Remove a game from borrowed list
+void Member::returnGame(string gameName) {
+    for (int i = 0; i < borrowedCount; i++) {
+        if (borrowedGames[i] == gameName) {
+            // Shift left
+            for (int j = i; j < borrowedCount - 1; j++) {
+                borrowedGames[j] = borrowedGames[j + 1];
+            }
+            borrowedCount--;
+            return;
+        }
+    }
+}
+
+// Display borrowed games
+void Member::displayBorrowedGames() {
+    if (borrowedCount == 0) {
+        cout << "No games currently borrowed.\n";
+        return;
+    }
+
+    cout << "Borrowed Games:\n";
+    for (int i = 0; i < borrowedCount; i++) {
+        cout << "- " << borrowedGames[i] << endl;
+    }
 }

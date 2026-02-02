@@ -2,6 +2,7 @@
 #define CLUBMANAGER_H
 #include "Game.h"
 #include "Member.h"
+using namespace std;
 
 class ClubManager {
 private:
@@ -24,6 +25,7 @@ public:
     void displayAdminSummary();
     void displayMemberSummary(string mID);
 	void saveGames(string filename);
+    Member* getMember(const string& mID);
 
     // --- Student C Tasks (Search, Sort, Ratings) ---
     // Student C ToDo: Copy GameList to a temporary Array and implement MergeSort or QuickSort

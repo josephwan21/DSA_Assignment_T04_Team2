@@ -13,14 +13,18 @@ Game::Game() {
 
 // Student A ToDo: Constructor to initialize game details
 Game::Game(string n, int minP, int maxP, int minT, int maxT, int year, double r, bool borrowed) {
-    name = "";
-    minPlayers = maxPlayers = 0;
-    minPlaytime = maxPlaytime = 0;
+    name = n;
+    minPlayers = minP;
+    maxPlayers = maxP;
+    minPlaytime = minT;
+    maxPlaytime = maxT;
     yearPublished = year;
     avgRating = r;
-    isBorrowed = false;
+    isBorrowed = borrowed;
     ratingCount = r > 0 ? 1 : 0;
     totalRating = r;
+    borrowDate = "";
+    returnDate = "";
 }
 
 // Getters
@@ -31,7 +35,7 @@ int Game::getMinPlaytime() { return minPlaytime; }
 int Game::getMaxPlaytime() { return maxPlaytime; }
 int Game::getYearPublished() { return yearPublished; }
 double Game::getAvgRating() { return avgRating; }
-bool Game::getIsBorrowed() { return isBorrowed; }
+bool Game::getIsBorrowed() const { return isBorrowed; }
 
 // Setters
 void Game::setName(string n) { name = n; }
@@ -68,9 +72,9 @@ GameList::GameList() { head = nullptr; size = 0; }
 
 // Student A ToDo: Insert a new GameNode at the end of the list
 void GameList::add(Game g) {
-    GameNode* newNode = new GameNode;
-    newNode->data = g;
-    newNode->next = nullptr;
+    GameNode* newNode = new GameNode(g);
+    //newNode->data = g;
+    //newNode->next = nullptr;
 
     if (!head) head = newNode;
     else {
@@ -147,4 +151,8 @@ GameList::~GameList() {
         delete temp;
         temp = next;
     }
+}
+
+GameNode* GameList::get() {
+    return head;
 }

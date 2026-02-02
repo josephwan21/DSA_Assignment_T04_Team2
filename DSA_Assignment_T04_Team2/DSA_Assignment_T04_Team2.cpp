@@ -27,73 +27,106 @@ int main() {
 
     while (running) {
         displayMainMenu();
-        cout << "Select Role: ";
+        cout << "Select Role/Option: ";
         if (!(cin >> mainChoice)) { clearInput(); continue; }
 
         if (mainChoice == 1) { // Administrator
-            displayAdminMenu();
-            int adminChoice;
-            cin >> adminChoice;
+            bool adminRunning = true;
+            while (adminRunning) {
+                displayAdminMenu();
+                int adminChoice;
+                cin >> adminChoice;
 
-            switch (adminChoice) {
-            case 1:
-                // // Student A ToDo: manager.addGame(newGame);
-                handleAddGame(manager);
-                break;
-            case 2:
-                // // Student A ToDo: manager.removeGame(gameName);
-                handleRemoveGame(manager);
-                break;
-            case 3:
-                // // Student A ToDo: manager.addMember(newMember);
-                handleAddMember(manager);
-                break;
-            case 4:
-                // // Student B ToDo: manager.displayAdminSummary();
-                manager.displayAdminSummary();
-                break;
+                switch (adminChoice) {
+                case 1:
+                    // // Student A ToDo: manager.addGame(newGame);
+                    handleAddGame(manager);
+                    break;
+                case 2:
+                    // // Student A ToDo: manager.removeGame(gameName);
+                    handleRemoveGame(manager);
+                    break;
+                case 3:
+                    // // Student A ToDo: manager.addMember(newMember);
+                    handleAddMember(manager);
+                    break;
+                case 4:
+                    // // Student B ToDo: manager.displayAdminSummary();
+                    manager.displayAdminSummary();
+                    break;
+                case 0:
+                    adminRunning = false;
+                    break;
+                default:
+                    cout << "Invalid option. Please try again.\n";
+                    break;
+                }
             }
-
         }
         else if (mainChoice == 2) { // Member
             string mID;
-            cout << "Enter Member ID: ";
-            cin >> mID;
+            Member* memberPtr = nullptr;
+            do {
+                cout << "Enter Member ID (0 to cancel): ";
+                cin >> mID;
 
-            // In a real scenario, you'd verify mID here via manager.getMember(mID)
-
-            displayMemberMenu();
-            int memChoice;
-            cin >> memChoice;
-
-            switch (memChoice) {
-            case 1: {
-                // // Student B ToDo: manager.performBorrow(mID, gameName);
-                cin.ignore();
-                string gameName;
-                cout << "Enter game name to borrow: ";
-                getline(cin, gameName);
-                manager.borrowGame(mID, gameName);
-                break;
+                if (mID == "0") {
+                    cout << "Returning to main menu.\n";
+                    break;
                 }
-            case 2: {
-                // // Student B ToDo: manager.performReturn(mID, gameName);
-                cin.ignore();
-                string gameName;
-                cout << "Enter game name to return: ";
-                getline(cin, gameName);
-                manager.returnGame(mID, gameName);
-                break;
-                } 
-            case 3:
-                // // Student B ToDo: manager.displayMemberSummary(mID);
-                manager.displayMemberSummary(mID);
-                break;
-            case 4:
-                // // Student C ToDo: manager.rateGame(gameName, score);
-                break;
+
+                memberPtr = manager.getMember(mID);
+                if (!memberPtr) {
+                    cout << "Member not found. Please enter a valid Member ID.\n";
+                }
+            } while (!memberPtr);
+
+            if (!memberPtr) {
+                continue;
             }
 
+            cout << "\nWelcome, " << memberPtr->getName() << " (Member ID: " << memberPtr->getID() << ")!\n";
+
+            bool memberRunning = true;
+            while (memberRunning) {
+                displayMemberMenu();
+                int memChoice;
+                cin >> memChoice;
+
+                switch (memChoice) {
+                case 1: {
+                    // // Student B ToDo: manager.performBorrow(mID, gameName);
+                    cin.ignore();
+                    string gameName;
+                    cout << "Enter game name to borrow: ";
+                    getline(cin, gameName);
+                    manager.borrowGame(mID, gameName);
+                    break;
+                }
+                case 2: {
+                    // // Student B ToDo: manager.performReturn(mID, gameName);
+                    cin.ignore();
+                    string gameName;
+                    cout << "Enter game name to return: ";
+                    getline(cin, gameName);
+                    manager.returnGame(mID, gameName);
+                    break;
+                }
+                case 3:
+                    // // Student B ToDo: manager.displayMemberSummary(mID);
+                    manager.displayMemberSummary(mID);
+                    break;
+                case 4:
+                    // // Student C ToDo: manager.rateGame(gameName, score);
+                    break;
+                case 0:
+                    memberRunning = false;
+                    break;
+                default:
+                    cout << "Invalid option. Please try again.\n";
+                    break;
+                }
+            }
         }
         else if (mainChoice == 3) { // Universal search/sort
             // // Student C ToDo: manager.searchByPlayers(count);
@@ -105,7 +138,7 @@ int main() {
             running = false;
         }
     }
-    return 0;
+    return 0; 
 }
 
 // --- Menu Implementations ---
@@ -126,6 +159,8 @@ void displayAdminMenu() {
     cout << "2. Remove a board game" << endl;
     cout << "3. Add a new member" << endl;
     cout << "4. Display summary of games borrowed/returned" << endl;
+    cout << "0. Exit Admin Menu" << endl;
+    cout << "Select option: ";
 }
 
 void displayMemberMenu() {
@@ -134,6 +169,8 @@ void displayMemberMenu() {
     cout << "2. Return a board game" << endl;
     cout << "3. Display my borrowed/returned summary" << endl;
     cout << "4. Rate a game (1-10)" << endl;
+    cout << "0. Exit Member Menu" << endl;
+    cout << "Select option: ";
 }
 
 void clearInput() {
