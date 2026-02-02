@@ -50,6 +50,7 @@ int main() {
                 break;
             case 4:
                 // // Student B ToDo: manager.displayAdminSummary();
+                manager.displayAdminSummary();
                 break;
             }
 
@@ -66,14 +67,27 @@ int main() {
             cin >> memChoice;
 
             switch (memChoice) {
-            case 1:
+            case 1: {
                 // // Student B ToDo: manager.performBorrow(mID, gameName);
+                cin.ignore();
+                string gameName;
+                cout << "Enter game name to borrow: ";
+                getline(cin, gameName);
+                manager.borrowGame(mID, gameName);
                 break;
-            case 2:
+                }
+            case 2: {
                 // // Student B ToDo: manager.performReturn(mID, gameName);
+                cin.ignore();
+                string gameName;
+                cout << "Enter game name to return: ";
+                getline(cin, gameName);
+                manager.returnGame(mID, gameName);
                 break;
+                } 
             case 3:
                 // // Student B ToDo: manager.displayMemberSummary(mID);
+                manager.displayMemberSummary(mID);
                 break;
             case 4:
                 // // Student C ToDo: manager.rateGame(gameName, score);
@@ -87,6 +101,7 @@ int main() {
         }
         else if (mainChoice == 4) {
             // // Student B ToDo: manager.saveGames("games.csv");
+			manager.saveGames("games.csv");
             running = false;
         }
     }
