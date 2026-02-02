@@ -1,11 +1,47 @@
 #include "ClubManager.h"
 #include <fstream>
 #include <sstream>
+#include <ctime>
+#include <iomanip>
+using namespace std;
+
+
+string getCurrentDate() {
+    time_t t = time(nullptr);
+    tm now{}; // note: initialize to zero
+    localtime_s(&now, &t); // safe version
+
+    stringstream ss;
+    ss << (now.tm_year + 1900) << "-"        // year
+        << setw(2) << setfill('0') << (now.tm_mon + 1) << "-" // month
+        << setw(2) << setfill('0') << now.tm_mday;           // day
+    return ss.str(); // YYYY-MM-DD
+}
+
 
 // --- Student B Tasks: File I/O & Transactions ---
 ClubManager::ClubManager()
 {
     nextMemberNo = 1000;
+}
+
+string trimQuotes(const string& s) {
+    if (s.size() >= 2 && s.front() == '"' && s.back() == '"')
+        return s.substr(1, s.size() - 2);
+    return s;
+}
+
+string getNextField(stringstream& ss) {
+    string field;
+    if (ss.peek() == '"') { // field starts with a quote
+        getline(ss, field, '"'); // skip opening quote
+        getline(ss, field, '"'); // read until closing quote
+        if (ss.peek() == ',') ss.ignore(); // skip the comma after closing quote
+    }
+    else {
+        getline(ss, field, ','); // normal field
+    }
+    return field;
 }
 // Student B ToDo: Read games.csv line by line using stringstream
 void ClubManager::loadData(string filename)
@@ -20,13 +56,19 @@ void ClubManager::loadData(string filename)
     }
 
     string line;
+    bool firstLine = true; //skip header
     while (getline(file, line)) {
+        if (firstLine) {
+            firstLine = false;
+            continue;
+        }
         stringstream ss(line);
-        string name, borrowedDate, returnDate;
+        string nameStr = getNextField(ss);
+        string borrowedDate, returnDate;
         int minP, maxP, minT, maxT, year;
         double rating;
-
-        getline(ss, name, ',');
+        //getline(ss, nameStr, ',');
+        string name = trimQuotes(nameStr);
         ss >> minP; ss.ignore();
         ss >> maxP; ss.ignore();
         ss >> minT; ss.ignore();
@@ -39,7 +81,9 @@ void ClubManager::loadData(string filename)
         bool isBorrowed = !borrowedDate.empty();
 
         Game g(name, minP, maxP, minT, maxT, year, rating, isBorrowed);
-        allGames.add(g);
+        g.setBorrowDate(borrowedDate);
+        g.setReturnDate(returnDate);
+        allGames.add(g);   
     }
 
     file.close();
@@ -58,21 +102,18 @@ void ClubManager::borrowGame(string mID, string gName)
         return;
     }
 
-    Game* g = allGames.find(gName);
+    Game* g = allGames.findAvailableCopy(gName);
+    
     if (!g) {
-        cout << "Game not found!\n";
-        return;
-    }
-
-    if (g->getIsBorrowed()) {
-        cout << "Game already borrowed!\n";
+        cout << "Game is not available for borrowing. Select another game to borrow.\n";
         return;
     }
 
     g->setIsBorrowed(true);
+    g->setBorrowDate(getCurrentDate());
+    g->setReturnDate("");
     m->borrowGame(gName);
-    cout << "Success! " << mID << " borrowed " << gName << endl;
-
+    cout << "Success! " << m->getName() << " (Member ID: " <<  mID << ") borrowed " << gName << endl;
 }
 
 
@@ -90,6 +131,9 @@ void ClubManager::returnGame(string mID, string gName) {
     }
 
     g->setIsBorrowed(false);
+    g->setBorrowDate("");
+    g->setReturnDate(getCurrentDate());
+    m->returnGame(gName);
     cout << "Game returned successfully.\n";
 }
 
@@ -127,6 +171,43 @@ void ClubManager::displayMemberSummary(string mID) {
     m->displayBorrowedGames();  // delegated to Member class
 }
 
+// Save all game data back to CSV
+void ClubManager::saveGames(const string filename) {
+    ofstream file(filename);
+
+    if (!file.is_open()) {
+        std::cout << "Failed to open file for saving.\n";
+        return;
+    }
+
+    // Write header
+    file << "name,minplayers,maxplayers,minplaytime,maxplaytime,yearpublished,rating,borroweddate,returndate\n";
+
+    GameNode* temp = allGames.get(); // head of list
+    while (temp) {
+        Game& g = temp->data;
+
+        string outName = g.getName();
+        if (outName.find(',') != string::npos) outName = "\"" + outName + "\"";
+
+        file << outName << ","
+            << g.getMinPlayers() << ","
+            << g.getMaxPlayers() << ","
+            << g.getMinPlaytime() << ","
+            << g.getMaxPlaytime() << ","
+            << g.getYearPublished() << ","
+            << g.getAvgRating() << ","
+            << g.getBorrowDate() << ","
+            << g.getReturnDate() << "\n";
+
+        temp = temp->next;
+    }
+
+    file.close();
+    cout << "Games saved successfully to " << filename << "\n";
+}
+
+
 
 
 // --- Student C Tasks: Sorting & Filtering ---
@@ -162,4 +243,8 @@ void ClubManager::removeGame(string gName) {
 
 string ClubManager::generateMemberID() {
     return "M" + to_string(nextMemberNo++);
+}
+
+Member* ClubManager::getMember(const string& mID) {
+    return memberTable.getMember(mID);
 }
