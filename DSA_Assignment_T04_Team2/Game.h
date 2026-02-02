@@ -6,6 +6,8 @@ using namespace std;
 
 class Game {
 private:
+    string borrowDate;
+    string returnDate;
     string name;
     int minPlayers, maxPlayers, minPlaytime, maxPlaytime, yearPublished;
     double avgRating;
@@ -25,7 +27,9 @@ public:
     int getMaxPlaytime();
     int getYearPublished();
     double getAvgRating();
-    bool getIsBorrowed();
+    bool getIsBorrowed() const;
+    string getBorrowDate() const { return borrowDate; }
+    string getReturnDate() const { return returnDate; }
 
     // Setters
     void setName(string n);
@@ -35,17 +39,28 @@ public:
     void setMaxPlaytime(int t);
     void setYearPublished(int y);
     void setIsBorrowed(bool status);
+    void setBorrowDate(string date) { borrowDate = date; }
+    void setReturnDate(string date) { returnDate = date; }
 
     // Rating functions
     void addRating(int score);
     void display();
 };
 
-// Student A ToDo: Implement a manual Linked List to store Game objects
-struct GameNode {
+class GameNode {
+public:
     Game data;
     GameNode* next;
+
+    GameNode(const Game& g) : data(g), next(nullptr) {}
 };
+
+// Student A ToDo: Implement a manual Linked List to store Game objects
+//struct GameNode {
+//    Game data;
+//    GameNode* next;
+//    GameNode(Game g);
+//};
 
 class GameList {
 private:
@@ -60,5 +75,6 @@ public:
     Game* find(string name);
     Game* findAvailableCopy(string name); // Find first available copy
     Game* findBorrowedCopy(string name);  // Find first borrowed copy
+    GameNode* get();
 };
 #endif
