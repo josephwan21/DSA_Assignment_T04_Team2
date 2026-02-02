@@ -3,11 +3,12 @@
 #include <string>
 using namespace std;
 
+const int MAX_BORROWED = 5;
+
 class Member {
 private:
     string memberID;
     string name;
-    static const int MAX_BORROWED = 5;
     string borrowedGames[MAX_BORROWED];
     int borrowedCount;
     // Student A ToDo: A simple array or list to store borrowed game names
@@ -17,6 +18,8 @@ public:
     string getID();
     string getName();
     void borrowGame(string gameName);
+    void returnGame(string gameName);
+    void displayBorrowedGames();
 };
 
 struct HashNode {
