@@ -213,17 +213,112 @@ void ClubManager::saveGames(const string filename) {
 // --- Student C Tasks: Sorting & Filtering ---
 
 // Student C ToDo: Implement a Sorting Algorithm (Data Structure 3: Array for Sorting)
-void ClubManager::displaySortedByYear()
-{
-    // 1. Copy GameList into a temporary Game array[size]
-    // 2. Perform QuickSort or BubbleSort on the array by yearPublished
-    // 3. Print the sorted results
+void quickSort(Game* arr, int low, int high, bool byYear) {
+    if (low < high) {
+        // Simple partition logic
+        double pivot = byYear ? arr[high].getYearPublished() : arr[high].getAvgRating();
+        int i = (low - 1);
+
+        for (int j = low; j <= high - 1; j++) {
+            double currentVal = byYear ? arr[j].getYearPublished() : arr[j].getAvgRating();
+
+            // Sort Descending for Rating, Ascending for Year
+            bool condition = byYear ? (currentVal < pivot) : (currentVal > pivot);
+
+            if (condition) {
+                i++;
+                swap(arr[i], arr[j]);
+            }
+        }
+        swap(arr[i + 1], arr[high]);
+        int pi = i + 1;
+
+        quickSort(arr, low, pi - 1, byYear);
+        quickSort(arr, pi + 1, high, byYear);
+    }
 }
 
-// Student C ToDo: Filter and display games for a specific player count
-void ClubManager::searchByPlayers(int count)
-{
-    // Traverse GameList and print games where min <= count <= max
+void ClubManager::displaySortedByYear() {
+    // 1. Count total games to create array
+    int count = 0;
+    GameNode* temp = allGames.get();
+    while (temp) { count++; temp = temp->next; }
+
+    if (count == 0) return;
+
+    // 2. Copy GameList into a temporary Game array
+    Game* tempArray = new Game[count];
+    temp = allGames.get();
+    for (int i = 0; i < count; i++) {
+        tempArray[i] = temp->data;
+        temp = temp->next;
+    }
+
+    // 3. Perform Sort
+    quickSort(tempArray, 0, count - 1, true);
+
+    // 4. Print results
+    cout << "\n--- Games Sorted by Year Published ---\n";
+    for (int i = 0; i < count; i++) {
+        tempArray[i].display();
+        cout << "--------------------------" << endl;
+    }
+    delete[] tempArray;
+}
+
+void ClubManager::displaySortedByRating() {
+    int count = 0;
+    GameNode* temp = allGames.get();
+    while (temp) { count++; temp = temp->next; }
+
+    if (count == 0) {
+        cout << "No games loaded in the system. Check if games.csv is in the correct folder.\n";
+        return;
+    }
+
+    Game* tempArray = new Game[count];
+    temp = allGames.get();
+    for (int i = 0; i < count; i++) {
+        tempArray[i] = temp->data;
+        temp = temp->next;
+    }
+
+    quickSort(tempArray, 0, count - 1, false);
+
+    cout << "\n--- Top Rated Games (Showing top " << displayLimit << ") ---\n";
+    // Student C: Added displayLimit check here
+    int limit = (count < displayLimit) ? count : displayLimit;
+    for (int i = 0; i < limit; i++) {
+        tempArray[i].display();
+        cout << "--------------------------" << endl;
+    }
+    delete[] tempArray;
+}
+
+void ClubManager::searchByPlayers(int count) {
+    cout << "\n--- Results for " << count << " players ---" << endl;
+    GameNode* curr = allGames.get();
+    int foundCount = 0;
+    while (curr && foundCount < displayLimit) {
+        if (count >= curr->data.getMinPlayers() && count <= curr->data.getMaxPlayers()) {
+            curr->data.display();
+            cout << "--------------------------" << endl;
+            foundCount++;
+        }
+        curr = curr->next;
+    }
+    if (foundCount == 0) cout << "No games match that player count." << endl;
+}
+
+void ClubManager::rateGame(string gName, int score) {
+    Game* g = allGames.find(gName); // Uses Student A's search
+    if (g) {
+        g->addRating(score);
+        cout << "Rating updated! New average: " << g->getAvgRating() << "/10" << endl;
+    }
+    else {
+        cout << "Game not found." << endl;
+    }
 }
 
 void ClubManager::addGame(Game g) {
