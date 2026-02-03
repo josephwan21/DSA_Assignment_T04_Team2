@@ -237,8 +237,13 @@ void ClubManager::addMember(Member m) {
 }
 
 void ClubManager::removeGame(string gName) {
-    allGames.remove(gName);
-    cout << "Game removed successfully.\n";
+    if (allGames.find(gName) == nullptr) {
+        cout << "Game does not exist.\n";
+    }
+    else {
+        allGames.remove(gName);
+        cout << "Game removed successfully.\n";
+    }    
 }
 
 string ClubManager::generateMemberID() {
