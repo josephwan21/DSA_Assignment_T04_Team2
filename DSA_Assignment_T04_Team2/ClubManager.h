@@ -9,6 +9,7 @@ private:
     GameList allGames;       // Managed by Student A's Linked List
     MemberHash memberTable;  // Managed by Student A's Hash Table
     int nextMemberNo;
+    int displayLimit = 10;
 
 public:
     ClubManager();
@@ -30,8 +31,13 @@ public:
     // --- Student C Tasks (Search, Sort, Ratings) ---
     // Student C ToDo: Copy GameList to a temporary Array and implement MergeSort or QuickSort
     void displaySortedByYear();
+    void displaySortedByRating();
     // Student C ToDo: Implementation of player count filtering
     void searchByPlayers(int count);
+    void rateGame(string gName, int score);
     string generateMemberID();
+
+    void setDisplayLimit(int limit) { displayLimit = limit; }
+    int getDisplayLimit() const { return displayLimit; }
 };
 #endif
