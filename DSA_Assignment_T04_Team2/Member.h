@@ -38,5 +38,8 @@ public:
     // Student A ToDo: Add/Get members using hashing logic
     void addMember(Member m);
     Member* getMember(string id);
+    HashNode** getTable() {
+        return table;
+    }
 };
 #endif

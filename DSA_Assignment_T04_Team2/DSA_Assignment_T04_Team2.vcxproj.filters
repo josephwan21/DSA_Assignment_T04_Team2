@@ -40,6 +40,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="games.csv" />
+    <None Include="games.csv">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="members.csv">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

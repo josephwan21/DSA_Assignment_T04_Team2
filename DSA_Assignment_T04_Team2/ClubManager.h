@@ -17,6 +17,8 @@ public:
     // --- Student B Tasks (Operations & File IO) ---
     // Student B ToDo: Open games.csv, parse lines using stringstream, and populate allGames
     void loadData(string filename);
+    void loadMembers(string filename);
+    void saveMembers(string filename);
     // Student B ToDo: Implementation for Borrow/Return logic
     void borrowGame(string mID, string gName);
     void addGame(Game g);
@@ -26,6 +28,7 @@ public:
     void displayAdminSummary();
     void displayMemberSummary(string mID);
 	void saveGames(string filename);
+    Game* findGame(const string& gName);
     Member* getMember(const string& mID);
 
     // --- Student C Tasks (Search, Sort, Ratings) ---
@@ -34,7 +37,7 @@ public:
     void displaySortedByRating();
     // Student C ToDo: Implementation of player count filtering
     void searchByPlayers(int count);
-    void rateGame(string gName, int score);
+    void rateGame(string gName, string mID);
     string generateMemberID();
 
     void setDisplayLimit(int limit) { displayLimit = limit; }
