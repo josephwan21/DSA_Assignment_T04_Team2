@@ -28,6 +28,7 @@ public:
     void displayAdminSummary();
     void displayMemberSummary(string mID);
 	void saveGames(string filename);
+    Game* findGame(const string& gName);
     Member* getMember(const string& mID);
 
     // --- Student C Tasks (Search, Sort, Ratings) ---
@@ -36,7 +37,7 @@ public:
     void displaySortedByRating();
     // Student C ToDo: Implementation of player count filtering
     void searchByPlayers(int count);
-    void rateGame(string gName, int score);
+    void rateGame(string gName, string mID);
     string generateMemberID();
 
     void setDisplayLimit(int limit) { displayLimit = limit; }

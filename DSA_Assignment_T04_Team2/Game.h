@@ -4,6 +4,15 @@
 #include <iostream>
 using namespace std;
 
+const int MAX_REVIEWS = 1000;
+
+struct Review {
+    string memberID;
+    string memberName;
+    int rating;
+    string comment;
+};
+
 class Game {
 private:
     string borrowDate;
@@ -14,6 +23,8 @@ private:
     bool isBorrowed;
     int ratingCount;      // Number of ratings
     double totalRating;   // Sum of ratings
+    Review reviews[MAX_REVIEWS];
+    int reviewCount;
 public:
     Game();
     Game(string n, int minP, int maxP, int minT, int maxT, int year, double r, bool borrowed);
@@ -30,6 +41,8 @@ public:
     bool getIsBorrowed() const;
     string getBorrowDate() const { return borrowDate; }
     string getReturnDate() const { return returnDate; }
+    int getReviewCount() const { return reviewCount; }
+    Review getReview(int index) const { return reviews[index]; }
 
     // Setters
     void setName(string n);
@@ -45,6 +58,10 @@ public:
     // Rating functions
     void addRating(int score);
     void display();
+
+    //Review functions
+    void addReview(const string& mID, const string& mName, int rating, const string& comment);
+    void displayReviews() const;
 };
 
 class GameNode {

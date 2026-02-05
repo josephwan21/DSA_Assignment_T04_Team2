@@ -64,7 +64,7 @@ void ClubManager::loadData(string filename)
         }
         stringstream ss(line);
         string nameStr = getNextField(ss);
-        string borrowedDate, returnDate;
+        string borrowedDate, returnDate, reviewsStr;
         int minP, maxP, minT, maxT, year;
         double rating;
         //getline(ss, nameStr, ',');
@@ -77,12 +77,29 @@ void ClubManager::loadData(string filename)
         ss >> rating; ss.ignore();
         getline(ss, borrowedDate, ',');
         getline(ss, returnDate, ',');
+        getline(ss, reviewsStr, ',');
 
         bool isBorrowed = !borrowedDate.empty();
 
         Game g(name, minP, maxP, minT, maxT, year, rating, isBorrowed);
         g.setBorrowDate(borrowedDate);
         g.setReturnDate(returnDate);
+
+        // Parse reviews if any
+        if (!reviewsStr.empty()) {
+            stringstream rss(reviewsStr);
+            string singleReview;
+            while (getline(rss, singleReview, ';')) {
+                string rID, rName, rRatingStr, rComment;
+                stringstream rss2(singleReview);
+                getline(rss2, rID, '|');
+                getline(rss2, rName, '|');
+                getline(rss2, rRatingStr, '|');
+                getline(rss2, rComment, '|');
+                int rRating = stoi(rRatingStr);
+                g.addReview(rID, rName, rRating, rComment);
+            }
+        }
         allGames.add(g);   
     }
 
@@ -215,11 +232,21 @@ void ClubManager::saveGames(const string filename) {
     }
 
     // Write header
-    file << "name,minplayers,maxplayers,minplaytime,maxplaytime,yearpublished,rating,borroweddate,returndate\n";
+    file << "name,minplayers,maxplayers,minplaytime,maxplaytime,yearpublished,rating,borroweddate,returndate,reviews\n";
 
     GameNode* temp = allGames.get(); // head of list
     while (temp) {
         Game& g = temp->data;
+
+        // Serialize reviews
+        string reviewsStr = "";
+        for (int i = 0; i < g.getReviewCount(); i++) {
+            if (i > 0) {
+                reviewsStr += ";";
+            }
+            Review r = g.getReview(i);
+            reviewsStr += r.memberID + "|" + r.memberName + "|" + to_string(r.rating) + "|" + r.comment;
+        }
 
         string outName = g.getName();
         if (outName.find(',') != string::npos) outName = "\"" + outName + "\"";
@@ -232,7 +259,8 @@ void ClubManager::saveGames(const string filename) {
             << g.getYearPublished() << ","
             << g.getAvgRating() << ","
             << g.getBorrowDate() << ","
-            << g.getReturnDate() << "\n";
+            << g.getReturnDate() << ","
+            << reviewsStr << "\n";
 
         temp = temp->next;
     }
@@ -443,16 +471,38 @@ void ClubManager::searchByPlayers(int count) {
     delete[] matchArray;
 }
 
-void ClubManager::rateGame(string gName, int score) {
+void ClubManager::rateGame(string gName, string mID) {
+    // Find the game using Student A's search function
+    Game* g = allGames.find(gName);
+    Member* m = memberTable.getMember(mID);
+
+    if (!g) {
+        cout << "Game not found.\n";
+        return;
+    }
+    if (!m) {
+        cout << "Member not found.\n";
+        return;
+    }
+
+    int score;
+    cout << "Enter rating (1-10): ";
+    cin >> score;
     if (score < 1 || score > 10) {
         cout << "Invalid rating. Please enter a score between 1 and 10.\n";
         return;
     }
 
-    // Find the game using Student A's search function
-    Game* g = allGames.find(gName);
+    cin.ignore(); // clear newline
+    string comment;
+    cout << "Enter an optional review comment (or leave empty): ";
+    getline(cin, comment);
+
     if (g) {
         g->addRating(score); // Call Game class rating logic
+        if (!comment.empty()) {
+            g->addReview(mID, m->getName(), score, comment);
+        }
         cout << "Successfully rated " << gName << " as " << score << "/10!\n";
         cout << "New Average Rating: " << g->getAvgRating() << endl;
     }
@@ -479,6 +529,10 @@ void ClubManager::removeGame(string gName) {
         allGames.remove(gName);
         cout << "Game removed successfully.\n";
     }    
+}
+
+Game* ClubManager::findGame(const string& gName) {
+    return allGames.find(gName);
 }
 
 string ClubManager::generateMemberID() {
