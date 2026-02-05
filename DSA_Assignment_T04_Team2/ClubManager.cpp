@@ -49,7 +49,7 @@ void ClubManager::loadData(string filename)
     // 1. Open file using ifstream
     // 2. Loop through lines, split by comma
     // 3. allGames.add(new Game(...))
-    ifstream file("games.csv");
+    ifstream file(filename);
     if (!file.is_open()) {
         cout << "Failed to open file.\n";
         return;
@@ -89,6 +89,40 @@ void ClubManager::loadData(string filename)
     file.close();
 
 }
+
+void ClubManager::loadMembers(string filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "No members file found. Starting fresh.\n";
+        return;
+    }
+
+    string line;
+    bool firstLine = true;
+
+    while (getline(file, line)) {
+        if (firstLine) { firstLine = false; continue; }
+
+        stringstream ss(line);
+        string id, name;
+
+        getline(ss, id, ',');
+        getline(ss, name, ',');
+
+        if (!id.empty() && !name.empty()) {
+            Member m(id, name);
+            memberTable.addMember(m);
+
+            // Keep member IDs consistent
+            int num = stoi(id.substr(1));
+            if (num >= nextMemberNo)
+                nextMemberNo = num + 1;
+        }
+    }
+
+    file.close();
+}
+
 
 // Student B ToDo: Update game status and member's borrowed list
 void ClubManager::borrowGame(string mID, string gName)
@@ -205,6 +239,29 @@ void ClubManager::saveGames(const string filename) {
 
     file.close();
     cout << "Games saved successfully to " << filename << "\n";
+}
+
+void ClubManager::saveMembers(string filename) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cout << "Failed to save members.\n";
+        return;
+    }
+
+    file << "memberID,name\n";
+
+    HashNode** table = memberTable.getTable();
+    for (int i = 0; i < 101; i++) {
+        HashNode* temp = table[i];
+        while (temp) {
+            file << temp->member.getID() << ","
+                << temp->member.getName() << "\n";
+            temp = temp->next;
+        }
+    }
+
+    file.close();
+    cout << "Members saved successfully to " << filename << "\n";
 }
 
 

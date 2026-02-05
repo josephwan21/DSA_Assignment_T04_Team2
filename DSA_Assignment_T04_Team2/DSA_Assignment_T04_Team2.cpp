@@ -21,6 +21,7 @@ int main() {
 
     // // Student B ToDo: manager.loadData("games.csv");
     manager.loadData("games.csv");
+    manager.loadMembers("members.csv");
 
     int mainChoice = 0;
     bool running = true;
@@ -162,6 +163,7 @@ int main() {
         else if (mainChoice == 0) {
             // // Student B ToDo: manager.saveGames("games.csv");
 			manager.saveGames("games.csv");
+            manager.saveMembers("members.csv");
             running = false;
         }
     }
