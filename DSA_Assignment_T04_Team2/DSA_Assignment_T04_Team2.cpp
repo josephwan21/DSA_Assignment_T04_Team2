@@ -119,13 +119,24 @@ int main() {
                 case 4:
                     // // Student C ToDo: manager.rateGame(gameName, score);
                     cin.ignore();
-                    int score;
                     cout << "Enter game name to rate: ";
                     getline(cin, gameName);
-                    cout << "Enter rating (1-10): ";
-                    cin >> score;
-                    manager.rateGame(gameName, score);
+                    manager.rateGame(gameName, mID);
                     break;
+                case 5: {
+                    cin.ignore();
+                    cout << "Enter game name to view reviews: ";
+                    getline(cin, gameName);
+
+                    Game* g = manager.findGame(gameName);
+                    if (!g) {
+                        cout << "Game not found.\n";
+                    }
+                    else {
+                        g->displayReviews();
+                    }
+                    break;
+                }
                 case 0:
                     memberRunning = false;
                     break;
@@ -199,6 +210,7 @@ void displayMemberMenu() {
     cout << "2. Return a board game" << endl;
     cout << "3. Display my borrowed/returned summary" << endl;
     cout << "4. Rate a game (1-10)" << endl;
+    cout << "5. View reviews for a game" << endl;
     cout << "0. Exit Member Menu" << endl;
     cout << "Select option: ";
 }
