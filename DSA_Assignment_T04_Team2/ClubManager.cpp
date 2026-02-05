@@ -239,14 +239,12 @@ void quickSort(Game* arr, int low, int high, bool byYear) {
 }
 
 void ClubManager::displaySortedByYear() {
-    // 1. Count total games to create array
     int count = 0;
     GameNode* temp = allGames.get();
     while (temp) { count++; temp = temp->next; }
 
     if (count == 0) return;
 
-    // 2. Copy GameList into a temporary Game array
     Game* tempArray = new Game[count];
     temp = allGames.get();
     for (int i = 0; i < count; i++) {
@@ -254,15 +252,32 @@ void ClubManager::displaySortedByYear() {
         temp = temp->next;
     }
 
-    // 3. Perform Sort
-    quickSort(tempArray, 0, count - 1, true);
+    quickSort(tempArray, 0, count - 1, true); // Sort by Year
 
-    // 4. Print results
-    cout << "\n--- Games Sorted by Year Published ---\n";
-    for (int i = 0; i < count; i++) {
-        tempArray[i].display();
-        cout << "--------------------------" << endl;
-    }
+    int currentIndex = 0;
+    char choice = 'n';
+
+    do {
+        cout << "\n--- Games by Year (Page " << (currentIndex / displayLimit) + 1 << ") ---\n";
+        int endOfPage = (currentIndex + displayLimit > count) ? count : currentIndex + displayLimit;
+
+        for (int i = currentIndex; i < endOfPage; i++) {
+            cout << "[" << i + 1 << "] ";
+            tempArray[i].display();
+            cout << "--------------------------" << endl;
+        }
+
+        if (endOfPage < count) {
+            cout << "Show next page? (y/n): ";
+            cin >> choice;
+            currentIndex += displayLimit;
+        }
+        else {
+            cout << "No more games to show.\n";
+            choice = 'n';
+        }
+    } while (choice == 'y' || choice == 'Y');
+
     delete[] tempArray;
 }
 
@@ -271,11 +286,9 @@ void ClubManager::displaySortedByRating() {
     GameNode* temp = allGames.get();
     while (temp) { count++; temp = temp->next; }
 
-    if (count == 0) {
-        cout << "No games loaded in the system. Check if games.csv is in the correct folder.\n";
-        return;
-    }
+    if (count == 0) return;
 
+    // Copy to temporary array for sorting
     Game* tempArray = new Game[count];
     temp = allGames.get();
     for (int i = 0; i < count; i++) {
@@ -283,41 +296,111 @@ void ClubManager::displaySortedByRating() {
         temp = temp->next;
     }
 
-    quickSort(tempArray, 0, count - 1, false);
+    quickSort(tempArray, 0, count - 1, false); // Sort by Rating Descending
 
-    cout << "\n--- Top Rated Games (Showing top " << displayLimit << ") ---\n";
-    // Student C: Added displayLimit check here
-    int limit = (count < displayLimit) ? count : displayLimit;
-    for (int i = 0; i < limit; i++) {
-        tempArray[i].display();
-        cout << "--------------------------" << endl;
-    }
+    int currentIndex = 0;
+    char choice = 'n';
+
+    do {
+        cout << "\n--- Top Rated Games (Page " << (currentIndex / displayLimit) + 1 << ") ---\n";
+
+        int endOfPage = currentIndex + displayLimit;
+        if (endOfPage > count) endOfPage = count;
+
+        for (int i = currentIndex; i < endOfPage; i++) {
+            cout << "[" << i + 1 << "] ";
+            tempArray[i].display();
+            cout << "--------------------------" << endl;
+        }
+
+        if (endOfPage < count) {
+            cout << "Show next " << displayLimit << " games? (y/n): ";
+            cin >> choice;
+            currentIndex += displayLimit;
+        }
+        else {
+            cout << "End of list reached.\n";
+            choice = 'n';
+        }
+    } while (choice == 'y' || choice == 'Y');
+
     delete[] tempArray;
 }
 
 void ClubManager::searchByPlayers(int count) {
-    cout << "\n--- Results for " << count << " players ---" << endl;
-    GameNode* curr = allGames.get();
-    int foundCount = 0;
-    while (curr && foundCount < displayLimit) {
-        if (count >= curr->data.getMinPlayers() && count <= curr->data.getMaxPlayers()) {
-            curr->data.display();
-            cout << "--------------------------" << endl;
-            foundCount++;
+    // 1. First, count how many games match the criteria to allocate array size
+    int matchCount = 0;
+    GameNode* temp = allGames.get();
+    while (temp) {
+        if (count >= temp->data.getMinPlayers() && count <= temp->data.getMaxPlayers()) {
+            matchCount++;
         }
-        curr = curr->next;
+        temp = temp->next;
     }
-    if (foundCount == 0) cout << "No games match that player count." << endl;
+
+    if (matchCount == 0) {
+        cout << "No games found suitable for " << count << " players." << endl;
+        return;
+    }
+
+    // 2. Copy only the matching games into a temporary array
+    Game* matchArray = new Game[matchCount];
+    temp = allGames.get();
+    int index = 0;
+    while (temp) {
+        if (count >= temp->data.getMinPlayers() && count <= temp->data.getMaxPlayers()) {
+            matchArray[index++] = temp->data;
+        }
+        temp = temp->next;
+    }
+
+    // 3. Sort the matches by Average Rating (Descending)
+    quickSort(matchArray, 0, matchCount - 1, false); // false = sort by rating
+
+    // 4. Implement Paging Display
+    int currentIndex = 0;
+    char choice = 'n';
+
+    do {
+        cout << "\n--- Games for " << count << " Players (Sorted by Rating - Page " << (currentIndex / displayLimit) + 1 << ") ---\n";
+
+        int endOfPage = (currentIndex + displayLimit > matchCount) ? matchCount : currentIndex + displayLimit;
+
+        for (int i = currentIndex; i < endOfPage; i++) {
+            cout << "[" << i + 1 << "] ";
+            matchArray[i].display();
+            cout << "--------------------------" << endl;
+        }
+
+        if (endOfPage < matchCount) {
+            cout << "Show next " << displayLimit << " matching games? (y/n): ";
+            cin >> choice;
+            currentIndex += displayLimit;
+        }
+        else {
+            cout << "End of matching results.\n";
+            choice = 'n';
+        }
+    } while (choice == 'y' || choice == 'Y');
+
+    delete[] matchArray;
 }
 
 void ClubManager::rateGame(string gName, int score) {
-    Game* g = allGames.find(gName); // Uses Student A's search
+    if (score < 1 || score > 10) {
+        cout << "Invalid rating. Please enter a score between 1 and 10.\n";
+        return;
+    }
+
+    // Find the game using Student A's search function
+    Game* g = allGames.find(gName);
     if (g) {
-        g->addRating(score);
-        cout << "Rating updated! New average: " << g->getAvgRating() << "/10" << endl;
+        g->addRating(score); // Call Game class rating logic
+        cout << "Successfully rated " << gName << " as " << score << "/10!\n";
+        cout << "New Average Rating: " << g->getAvgRating() << endl;
     }
     else {
-        cout << "Game not found." << endl;
+        cout << "Game '" << gName << "' not found in the system.\n";
     }
 }
 
