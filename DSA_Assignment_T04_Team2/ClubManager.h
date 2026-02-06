@@ -22,7 +22,7 @@ public:
     void loadGameHistory(const string& filename);
     // Student B ToDo: Implementation for Borrow/Return logic
     void borrowGame(string mID, string gName);
-    void addGame(Game g);
+    void addGame(const Game& g);
     void addMember(Member m);
     void removeGame(string gName);
     void returnGame(string mID, string gName);

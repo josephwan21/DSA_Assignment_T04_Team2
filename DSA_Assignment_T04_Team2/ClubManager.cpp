@@ -81,9 +81,9 @@ void ClubManager::loadData(string filename)
 
         bool isBorrowed = !borrowedDate.empty();
 
-        Game g(name, minP, maxP, minT, maxT, year, rating, isBorrowed);
-        g.setBorrowDate(borrowedDate);
-        g.setReturnDate(returnDate);
+        Game* g = new Game(name, minP, maxP, minT, maxT, year, rating, isBorrowed);
+        g->setBorrowDate(borrowedDate);
+        g->setReturnDate(returnDate);
 
         // Parse reviews if any
         if (!reviewsStr.empty()) {
@@ -97,10 +97,10 @@ void ClubManager::loadData(string filename)
                 getline(rss2, rRatingStr, '|');
                 getline(rss2, rComment, '|');
                 int rRating = stoi(rRatingStr);
-                g.addReview(rID, rName, rRating, rComment);
+                g->addReview(rID, rName, rRating, rComment);
             }
         }
-        allGames.add(g);   
+        allGames.add(*g);
     }
 
     file.close();
@@ -176,7 +176,6 @@ void ClubManager::loadGameHistory(const string& filename) {
     }
 
     file.close();
-    cout << "Game history loaded from " << filename << endl;
 }
 
 
@@ -203,7 +202,7 @@ void ClubManager::borrowGame(string mID, string gName)
     g->setIsBorrowed(true);
     g->setBorrowDate(getCurrentDate());
     g->setReturnDate("");
-    m->borrowGame(gName);
+    m->borrowGame(g->getName());
     cout << "Success! " << m->getName() << " (Member ID: " <<  mID << ") borrowed " << gName << endl;
 }
 
@@ -224,7 +223,7 @@ void ClubManager::returnGame(string mID, string gName) {
     g->setIsBorrowed(false);
     g->setBorrowDate("");
     g->setReturnDate(getCurrentDate());
-    m->returnGame(gName);
+    m->returnGame(g->getName());
     cout << "Game returned successfully.\n";
 }
 
@@ -596,7 +595,7 @@ void ClubManager::recordGamePlay() {
 
     for (int i = 0; i < r.playerCount; i++) {
         string pid;
-        cout << "Enter player ID" << i + 1 << ": ";
+        cout << "Enter player ID " << i + 1 << ": ";
         getline(cin, pid);
         if (!getMember(pid)) {
             cout << "Player ID " << pid << " does not exist. Record cancelled.\n";
@@ -627,7 +626,7 @@ void ClubManager::sortGameHistory() {
 /////////////////////////////////////
 
 
-void ClubManager::addGame(Game g) {
+void ClubManager::addGame(const Game& g) {
     allGames.add(g);
     cout << "Game added successfully.\n";
 }
