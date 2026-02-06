@@ -2,6 +2,15 @@
 #include <iostream>
 using namespace std;
 
+string toUpperCase(string s) {
+    for (int i = 0; i < s.length(); i++) {
+        if (s[i] >= 'a' && s[i] <= 'z') {
+            s[i] = s[i] - 'a' + 'A';
+        }
+    }
+    return s;
+}
+
 Member::Member() {
     memberID = "";
     name = "";
@@ -64,6 +73,7 @@ void MemberHash::addMember(Member m) {
 
 // Student A ToDo: Retrieve a member pointer using their ID
 Member* MemberHash::getMember(string id) {
+    id = toUpperCase(id);
     int index = hashFunction(id);
     HashNode* temp = table[index];
 
