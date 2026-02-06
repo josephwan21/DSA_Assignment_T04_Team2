@@ -9,6 +9,7 @@ Game::Game() {
     ratingCount = 0;
     totalRating = 0;
     isBorrowed = false;
+    reviewCount = 0;
 }
 
 // Student A ToDo: Constructor to initialize game details
@@ -25,6 +26,7 @@ Game::Game(string n, int minP, int maxP, int minT, int maxT, int year, double r,
     totalRating = r;
     borrowDate = "";
     returnDate = "";
+    reviewCount = 0;
 }
 
 // Getters
@@ -141,6 +143,34 @@ Game* GameList::findBorrowedCopy(string name) {
         temp = temp->next;
     }
     return nullptr;
+}
+
+// ------------------- Reviews -------------------
+
+void Game::addReview(const string& mID, const string& mName, int rating, const string& comment) {
+    if (reviewCount < MAX_REVIEWS) {
+        reviews[reviewCount].memberID = mID;
+        reviews[reviewCount].memberName = mName;
+        reviews[reviewCount].rating = rating;
+        reviews[reviewCount].comment = comment;
+        reviewCount++;
+    }
+    else {
+        cout << "Max reviews reached for " << name << endl;
+    }
+}
+
+void Game::displayReviews() const {
+    if (reviewCount == 0) {
+        cout << "No reviews yet for " << name << ".\n";
+        return;
+    }
+
+    cout << "Reviews for " << name << ":\n";
+    for (int i = 0; i < reviewCount; i++) {
+        cout << reviews[i].memberName << " (" << reviews[i].memberID << ") rated "
+            << reviews[i].rating << "/10: " << reviews[i].comment << endl;
+    }
 }
 
 // Student A ToDo: Destructor to delete all nodes and prevent memory leaks

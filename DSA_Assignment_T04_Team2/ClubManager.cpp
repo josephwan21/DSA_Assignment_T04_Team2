@@ -49,7 +49,7 @@ void ClubManager::loadData(string filename)
     // 1. Open file using ifstream
     // 2. Loop through lines, split by comma
     // 3. allGames.add(new Game(...))
-    ifstream file("games.csv");
+    ifstream file(filename);
     if (!file.is_open()) {
         cout << "Failed to open file.\n";
         return;
@@ -64,7 +64,7 @@ void ClubManager::loadData(string filename)
         }
         stringstream ss(line);
         string nameStr = getNextField(ss);
-        string borrowedDate, returnDate;
+        string borrowedDate, returnDate, reviewsStr;
         int minP, maxP, minT, maxT, year;
         double rating;
         //getline(ss, nameStr, ',');
@@ -77,18 +77,69 @@ void ClubManager::loadData(string filename)
         ss >> rating; ss.ignore();
         getline(ss, borrowedDate, ',');
         getline(ss, returnDate, ',');
+        getline(ss, reviewsStr, ',');
 
         bool isBorrowed = !borrowedDate.empty();
 
         Game g(name, minP, maxP, minT, maxT, year, rating, isBorrowed);
         g.setBorrowDate(borrowedDate);
         g.setReturnDate(returnDate);
+
+        // Parse reviews if any
+        if (!reviewsStr.empty()) {
+            stringstream rss(reviewsStr);
+            string singleReview;
+            while (getline(rss, singleReview, ';')) {
+                string rID, rName, rRatingStr, rComment;
+                stringstream rss2(singleReview);
+                getline(rss2, rID, '|');
+                getline(rss2, rName, '|');
+                getline(rss2, rRatingStr, '|');
+                getline(rss2, rComment, '|');
+                int rRating = stoi(rRatingStr);
+                g.addReview(rID, rName, rRating, rComment);
+            }
+        }
         allGames.add(g);   
     }
 
     file.close();
 
 }
+
+void ClubManager::loadMembers(string filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "No members file found. Starting fresh.\n";
+        return;
+    }
+
+    string line;
+    bool firstLine = true;
+
+    while (getline(file, line)) {
+        if (firstLine) { firstLine = false; continue; }
+
+        stringstream ss(line);
+        string id, name;
+
+        getline(ss, id, ',');
+        getline(ss, name, ',');
+
+        if (!id.empty() && !name.empty()) {
+            Member m(id, name);
+            memberTable.addMember(m);
+
+            // Keep member IDs consistent
+            int num = stoi(id.substr(1));
+            if (num >= nextMemberNo)
+                nextMemberNo = num + 1;
+        }
+    }
+
+    file.close();
+}
+
 
 // Student B ToDo: Update game status and member's borrowed list
 void ClubManager::borrowGame(string mID, string gName)
@@ -181,11 +232,21 @@ void ClubManager::saveGames(const string filename) {
     }
 
     // Write header
-    file << "name,minplayers,maxplayers,minplaytime,maxplaytime,yearpublished,rating,borroweddate,returndate\n";
+    file << "name,minplayers,maxplayers,minplaytime,maxplaytime,yearpublished,rating,borroweddate,returndate,reviews\n";
 
     GameNode* temp = allGames.get(); // head of list
     while (temp) {
         Game& g = temp->data;
+
+        // Serialize reviews
+        string reviewsStr = "";
+        for (int i = 0; i < g.getReviewCount(); i++) {
+            if (i > 0) {
+                reviewsStr += ";";
+            }
+            Review r = g.getReview(i);
+            reviewsStr += r.memberID + "|" + r.memberName + "|" + to_string(r.rating) + "|" + r.comment;
+        }
 
         string outName = g.getName();
         if (outName.find(',') != string::npos) outName = "\"" + outName + "\"";
@@ -198,7 +259,8 @@ void ClubManager::saveGames(const string filename) {
             << g.getYearPublished() << ","
             << g.getAvgRating() << ","
             << g.getBorrowDate() << ","
-            << g.getReturnDate() << "\n";
+            << g.getReturnDate() << ","
+            << reviewsStr << "\n";
 
         temp = temp->next;
     }
@@ -207,23 +269,246 @@ void ClubManager::saveGames(const string filename) {
     cout << "Games saved successfully to " << filename << "\n";
 }
 
+void ClubManager::saveMembers(string filename) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cout << "Failed to save members.\n";
+        return;
+    }
+
+    file << "memberID,name\n";
+
+    HashNode** table = memberTable.getTable();
+    for (int i = 0; i < 101; i++) {
+        HashNode* temp = table[i];
+        while (temp) {
+            file << temp->member.getID() << ","
+                << temp->member.getName() << "\n";
+            temp = temp->next;
+        }
+    }
+
+    file.close();
+    cout << "Members saved successfully to " << filename << "\n";
+}
+
 
 
 
 // --- Student C Tasks: Sorting & Filtering ---
 
 // Student C ToDo: Implement a Sorting Algorithm (Data Structure 3: Array for Sorting)
-void ClubManager::displaySortedByYear()
-{
-    // 1. Copy GameList into a temporary Game array[size]
-    // 2. Perform QuickSort or BubbleSort on the array by yearPublished
-    // 3. Print the sorted results
+void quickSort(Game* arr, int low, int high, bool byYear) {
+    if (low < high) {
+        // Simple partition logic
+        double pivot = byYear ? arr[high].getYearPublished() : arr[high].getAvgRating();
+        int i = (low - 1);
+
+        for (int j = low; j <= high - 1; j++) {
+            double currentVal = byYear ? arr[j].getYearPublished() : arr[j].getAvgRating();
+
+            // Sort Descending for Rating, Ascending for Year
+            bool condition = byYear ? (currentVal < pivot) : (currentVal > pivot);
+
+            if (condition) {
+                i++;
+                swap(arr[i], arr[j]);
+            }
+        }
+        swap(arr[i + 1], arr[high]);
+        int pi = i + 1;
+
+        quickSort(arr, low, pi - 1, byYear);
+        quickSort(arr, pi + 1, high, byYear);
+    }
 }
 
-// Student C ToDo: Filter and display games for a specific player count
-void ClubManager::searchByPlayers(int count)
-{
-    // Traverse GameList and print games where min <= count <= max
+void ClubManager::displaySortedByYear() {
+    int count = 0;
+    GameNode* temp = allGames.get();
+    while (temp) { count++; temp = temp->next; }
+
+    if (count == 0) return;
+
+    Game* tempArray = new Game[count];
+    temp = allGames.get();
+    for (int i = 0; i < count; i++) {
+        tempArray[i] = temp->data;
+        temp = temp->next;
+    }
+
+    quickSort(tempArray, 0, count - 1, true); // Sort by Year
+
+    int currentIndex = 0;
+    char choice = 'n';
+
+    do {
+        cout << "\n--- Games by Year (Page " << (currentIndex / displayLimit) + 1 << ") ---\n";
+        int endOfPage = (currentIndex + displayLimit > count) ? count : currentIndex + displayLimit;
+
+        for (int i = currentIndex; i < endOfPage; i++) {
+            cout << "[" << i + 1 << "] ";
+            tempArray[i].display();
+            cout << "--------------------------" << endl;
+        }
+
+        if (endOfPage < count) {
+            cout << "Show next page? (y/n): ";
+            cin >> choice;
+            currentIndex += displayLimit;
+        }
+        else {
+            cout << "No more games to show.\n";
+            choice = 'n';
+        }
+    } while (choice == 'y' || choice == 'Y');
+
+    delete[] tempArray;
+}
+
+void ClubManager::displaySortedByRating() {
+    int count = 0;
+    GameNode* temp = allGames.get();
+    while (temp) { count++; temp = temp->next; }
+
+    if (count == 0) return;
+
+    // Copy to temporary array for sorting
+    Game* tempArray = new Game[count];
+    temp = allGames.get();
+    for (int i = 0; i < count; i++) {
+        tempArray[i] = temp->data;
+        temp = temp->next;
+    }
+
+    quickSort(tempArray, 0, count - 1, false); // Sort by Rating Descending
+
+    int currentIndex = 0;
+    char choice = 'n';
+
+    do {
+        cout << "\n--- Top Rated Games (Page " << (currentIndex / displayLimit) + 1 << ") ---\n";
+
+        int endOfPage = currentIndex + displayLimit;
+        if (endOfPage > count) endOfPage = count;
+
+        for (int i = currentIndex; i < endOfPage; i++) {
+            cout << "[" << i + 1 << "] ";
+            tempArray[i].display();
+            cout << "--------------------------" << endl;
+        }
+
+        if (endOfPage < count) {
+            cout << "Show next " << displayLimit << " games? (y/n): ";
+            cin >> choice;
+            currentIndex += displayLimit;
+        }
+        else {
+            cout << "End of list reached.\n";
+            choice = 'n';
+        }
+    } while (choice == 'y' || choice == 'Y');
+
+    delete[] tempArray;
+}
+
+void ClubManager::searchByPlayers(int count) {
+    // 1. First, count how many games match the criteria to allocate array size
+    int matchCount = 0;
+    GameNode* temp = allGames.get();
+    while (temp) {
+        if (count >= temp->data.getMinPlayers() && count <= temp->data.getMaxPlayers()) {
+            matchCount++;
+        }
+        temp = temp->next;
+    }
+
+    if (matchCount == 0) {
+        cout << "No games found suitable for " << count << " players." << endl;
+        return;
+    }
+
+    // 2. Copy only the matching games into a temporary array
+    Game* matchArray = new Game[matchCount];
+    temp = allGames.get();
+    int index = 0;
+    while (temp) {
+        if (count >= temp->data.getMinPlayers() && count <= temp->data.getMaxPlayers()) {
+            matchArray[index++] = temp->data;
+        }
+        temp = temp->next;
+    }
+
+    // 3. Sort the matches by Average Rating (Descending)
+    quickSort(matchArray, 0, matchCount - 1, false); // false = sort by rating
+
+    // 4. Implement Paging Display
+    int currentIndex = 0;
+    char choice = 'n';
+
+    do {
+        cout << "\n--- Games for " << count << " Players (Sorted by Rating - Page " << (currentIndex / displayLimit) + 1 << ") ---\n";
+
+        int endOfPage = (currentIndex + displayLimit > matchCount) ? matchCount : currentIndex + displayLimit;
+
+        for (int i = currentIndex; i < endOfPage; i++) {
+            cout << "[" << i + 1 << "] ";
+            matchArray[i].display();
+            cout << "--------------------------" << endl;
+        }
+
+        if (endOfPage < matchCount) {
+            cout << "Show next " << displayLimit << " matching games? (y/n): ";
+            cin >> choice;
+            currentIndex += displayLimit;
+        }
+        else {
+            cout << "End of matching results.\n";
+            choice = 'n';
+        }
+    } while (choice == 'y' || choice == 'Y');
+
+    delete[] matchArray;
+}
+
+void ClubManager::rateGame(string gName, string mID) {
+    // Find the game using Student A's search function
+    Game* g = allGames.find(gName);
+    Member* m = memberTable.getMember(mID);
+
+    if (!g) {
+        cout << "Game not found.\n";
+        return;
+    }
+    if (!m) {
+        cout << "Member not found.\n";
+        return;
+    }
+
+    int score;
+    cout << "Enter rating (1-10): ";
+    cin >> score;
+    if (score < 1 || score > 10) {
+        cout << "Invalid rating. Please enter a score between 1 and 10.\n";
+        return;
+    }
+
+    cin.ignore(); // clear newline
+    string comment;
+    cout << "Enter an optional review comment (or leave empty): ";
+    getline(cin, comment);
+
+    if (g) {
+        g->addRating(score); // Call Game class rating logic
+        if (!comment.empty()) {
+            g->addReview(mID, m->getName(), score, comment);
+        }
+        cout << "Successfully rated " << gName << " as " << score << "/10!\n";
+        cout << "New Average Rating: " << g->getAvgRating() << endl;
+    }
+    else {
+        cout << "Game '" << gName << "' not found in the system.\n";
+    }
 }
 
 void ClubManager::addGame(Game g) {
@@ -244,6 +529,10 @@ void ClubManager::removeGame(string gName) {
         allGames.remove(gName);
         cout << "Game removed successfully.\n";
     }    
+}
+
+Game* ClubManager::findGame(const string& gName) {
+    return allGames.find(gName);
 }
 
 string ClubManager::generateMemberID() {

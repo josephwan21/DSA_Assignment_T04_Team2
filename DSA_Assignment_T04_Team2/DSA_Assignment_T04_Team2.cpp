@@ -21,6 +21,7 @@ int main() {
 
     // // Student B ToDo: manager.loadData("games.csv");
     manager.loadData("games.csv");
+    manager.loadMembers("members.csv");
 
     int mainChoice = 0;
     bool running = true;
@@ -93,11 +94,11 @@ int main() {
                 int memChoice;
                 cin >> memChoice;
 
+                string gameName;
                 switch (memChoice) {
                 case 1: {
                     // // Student B ToDo: manager.performBorrow(mID, gameName);
                     cin.ignore();
-                    string gameName;
                     cout << "Enter game name to borrow: ";
                     getline(cin, gameName);
                     manager.borrowGame(mID, gameName);
@@ -106,7 +107,6 @@ int main() {
                 case 2: {
                     // // Student B ToDo: manager.performReturn(mID, gameName);
                     cin.ignore();
-                    string gameName;
                     cout << "Enter game name to return: ";
                     getline(cin, gameName);
                     manager.returnGame(mID, gameName);
@@ -118,7 +118,25 @@ int main() {
                     break;
                 case 4:
                     // // Student C ToDo: manager.rateGame(gameName, score);
+                    cin.ignore();
+                    cout << "Enter game name to rate: ";
+                    getline(cin, gameName);
+                    manager.rateGame(gameName, mID);
                     break;
+                case 5: {
+                    cin.ignore();
+                    cout << "Enter game name to view reviews: ";
+                    getline(cin, gameName);
+
+                    Game* g = manager.findGame(gameName);
+                    if (!g) {
+                        cout << "Game not found.\n";
+                    }
+                    else {
+                        g->displayReviews();
+                    }
+                    break;
+                }
                 case 0:
                     memberRunning = false;
                     break;
@@ -131,10 +149,32 @@ int main() {
         else if (mainChoice == 3) { // Universal search/sort
             // // Student C ToDo: manager.searchByPlayers(count);
             // // Student C ToDo: manager.displaySortedByRating();
+            cout << "1. Sort by Rating\n2. Sort by Year\n3. Search by Player Count\nChoice: ";
+            int subChoice; cin >> subChoice;
+            if (subChoice == 1) manager.displaySortedByRating();
+            else if (subChoice == 2) manager.displaySortedByYear();
+            else if (subChoice == 3) {
+                int pCount; cout << "Enter players: "; cin >> pCount;
+                manager.searchByPlayers(pCount);
+            }
         }
-        else if (mainChoice == 4) {
+        else if (mainChoice == 4) { // NEW: Settings Menu
+            cout << "\n--- Settings ---\n";
+            cout << "Current display limit: " << manager.getDisplayLimit() << endl;
+            cout << "Set new limit (e.g., 5, 10, 50): ";
+            int newLimit;
+            if (cin >> newLimit) {
+                manager.setDisplayLimit(newLimit);
+                cout << "Limit updated successfully.\n";
+            }
+            else {
+                clearInput();
+            }
+        }
+        else if (mainChoice == 0) {
             // // Student B ToDo: manager.saveGames("games.csv");
 			manager.saveGames("games.csv");
+            manager.saveMembers("members.csv");
             running = false;
         }
     }
@@ -150,7 +190,8 @@ void displayMainMenu() {
     cout << "1. Administrator" << endl;
     cout << "2. Member" << endl;
     cout << "3. Search & Sort Games" << endl;
-    cout << "4. Exit" << endl;
+    cout << "4. Settings" << endl;
+    cout << "0. Exit" << endl;
 }
 
 void displayAdminMenu() {
@@ -169,6 +210,7 @@ void displayMemberMenu() {
     cout << "2. Return a board game" << endl;
     cout << "3. Display my borrowed/returned summary" << endl;
     cout << "4. Rate a game (1-10)" << endl;
+    cout << "5. View reviews for a game" << endl;
     cout << "0. Exit Member Menu" << endl;
     cout << "Select option: ";
 }
