@@ -186,3 +186,100 @@ GameList::~GameList() {
 GameNode* GameList::get() {
     return head;
 }
+
+
+//Newly Added GameHistory Implementation (Record Play of Game)//
+GameHistory::GameHistory() {
+    head = nullptr;
+}
+
+GameHistory::~GameHistory() {
+    while (head) {
+        HistoryNode* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
+
+
+void GameHistory::addRecord(GamePlayRecord r) {
+    HistoryNode* newNode = new HistoryNode;
+    newNode->data = r;
+    newNode->next = nullptr;
+
+    if (!head) {
+        head = newNode;
+        return;
+    }
+
+    HistoryNode* curr = head;
+    while (curr->next) {
+        curr = curr->next;
+    }
+    curr->next = newNode;
+}
+void GameHistory::searchByGame(string name) {
+    HistoryNode* curr = head;
+    bool found = false;
+
+    while (curr) {
+        if (curr->data.gameName == name) {
+            found = true;
+            cout << "\nGame: " << curr->data.gameName << endl;
+            cout << "Players: ";
+            for (int i = 0; i < curr->data.playerCount; i++) {
+                cout << curr->data.players[i] << " ";
+            }
+            cout << "\nWinner: " << curr->data.winnerID << endl;
+        }
+        curr = curr->next;
+    }
+
+    if (!found)
+        cout << "No records found for this game.\n";
+}
+
+
+void GameHistory::bubbleSortByGame() {
+    if (!head || !head->next) return;
+
+    bool swapped;
+    HistoryNode* ptr;
+    HistoryNode* last = nullptr;
+
+    do {
+        swapped = false;
+        ptr = head;
+
+        while (ptr->next != last) {
+            if (ptr->data.gameName > ptr->next->data.gameName) {
+                GamePlayRecord temp = ptr->data;
+                ptr->data = ptr->next->data;
+                ptr->next->data = temp;
+                swapped = true;
+            }
+            ptr = ptr->next;
+        }
+        last = ptr;
+    } while (swapped);
+}
+
+
+
+void GameHistory::displayAll() {
+    HistoryNode* curr = head;
+    if (!curr) {
+        cout << "No game history available.\n";
+        return;
+    }
+
+    while (curr) {
+        cout << "\nGame: " << curr->data.gameName << endl;
+        cout << "Players: ";
+        for (int i = 0; i < curr->data.playerCount; i++)
+            cout << curr->data.players[i] << " ";
+        cout << "\nWinner: " << curr->data.winnerID << endl;
+
+        curr = curr->next;
+    }
+}

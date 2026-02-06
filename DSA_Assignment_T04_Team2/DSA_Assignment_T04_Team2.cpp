@@ -137,6 +137,12 @@ int main() {
                     }
                     break;
                 }
+                case 6: {
+                    cin.ignore();
+                    manager.recordGamePlay();
+                    break;
+                }
+
                 case 0:
                     memberRunning = false;
                     break;
@@ -149,7 +155,7 @@ int main() {
         else if (mainChoice == 3) { // Universal search/sort
             // // Student C ToDo: manager.searchByPlayers(count);
             // // Student C ToDo: manager.displaySortedByRating();
-            cout << "1. Sort by Rating\n2. Sort by Year\n3. Search by Player Count\nChoice: ";
+            cout << "1. Sort by Rating\n2. Sort by Year\n3. Search by Player Count\n4. Search game history\n5. Sort game history\nChoice: ";
             int subChoice; cin >> subChoice;
             if (subChoice == 1) manager.displaySortedByRating();
             else if (subChoice == 2) manager.displaySortedByYear();
@@ -157,6 +163,16 @@ int main() {
                 int pCount; cout << "Enter players: "; cin >> pCount;
                 manager.searchByPlayers(pCount);
             }
+            //Newly added
+			else if (subChoice == 4) {
+				string gName;
+				cout << "Enter game name to search history: ";
+				getline(cin, gName);
+				manager.searchGameHistory(gName);
+			}
+			else if (subChoice == 5) {
+				manager.sortGameHistory();
+			}
         }
         else if (mainChoice == 4) { // NEW: Settings Menu
             cout << "\n--- Settings ---\n";
@@ -211,6 +227,7 @@ void displayMemberMenu() {
     cout << "3. Display my borrowed/returned summary" << endl;
     cout << "4. Rate a game (1-10)" << endl;
     cout << "5. View reviews for a game" << endl;
+	cout << "6. Record a game play session" << endl;
     cout << "0. Exit Member Menu" << endl;
     cout << "Select option: ";
 }
