@@ -511,6 +511,56 @@ void ClubManager::rateGame(string gName, string mID) {
     }
 }
 
+//Newly Added Functions
+void ClubManager::recordGamePlay() {
+    GamePlayRecord r;
+    string gameName;
+    cout << "Enter game name: ";
+    getline(cin, r.gameName);
+    Game* g = allGames.find(r.gameName);
+
+    if (!g) {
+        cout << "Game does not exist. Record cancelled.\n";
+        return;
+    }
+
+    cout << "Number of players: ";
+    cin >> r.playerCount;
+    cin.ignore();
+
+    for (int i = 0; i < r.playerCount; i++) {
+        string pid;
+        cout << "Enter player ID" << i + 1 << ": ";
+        getline(cin, pid);
+        if (!getMember(pid)) {
+            cout << "Player ID " << pid << " does not exist. Record cancelled.\n";
+            return;
+        }
+        r.players[i] = pid;
+    }
+
+    cout << "Enter winner ID: ";
+    getline(cin, r.winnerID);
+
+    if (!getMember(r.winnerID)) {
+        cout << "Winner ID does not exist. Record cancelled.\n";
+        return;
+    }
+
+    history.addRecord(r);
+    cout << "Game play recorded successfully.\n";
+}
+void ClubManager::searchGameHistory(string gameName) {
+    history.searchByGame(gameName);
+}
+
+void ClubManager::sortGameHistory() {
+    history.bubbleSortByGame();
+    cout << "Game history sorted by game name.\n";
+}
+/////////////////////////////////////
+
+
 void ClubManager::addGame(Game g) {
     allGames.add(g);
     cout << "Game added successfully.\n";

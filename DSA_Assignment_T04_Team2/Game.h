@@ -4,6 +4,10 @@
 #include <iostream>
 using namespace std;
 
+
+const int MAX_PLAYERS = 6;  //New
+const int MAX_RECORDS = 200; //New
+
 const int MAX_REVIEWS = 1000;
 
 struct Review {
@@ -94,4 +98,33 @@ public:
     Game* findBorrowedCopy(string name);  // Find first borrowed copy
     GameNode* get();
 };
+
+//Newly Added
+struct GamePlayRecord {
+    string gameName;
+    string players[MAX_PLAYERS];
+    int playerCount;
+    string winnerID;
+};
+
+struct HistoryNode {
+    GamePlayRecord data;
+    HistoryNode* next;
+};
+class GameHistory {
+private:
+    GamePlayRecord records[MAX_RECORDS];
+    int recordCount;
+    HistoryNode* head;
+
+public:
+    GameHistory();
+    ~GameHistory();
+    void addRecord(GamePlayRecord r);
+    void displayAll();
+    void searchByGame(string gameName);
+    void bubbleSortByGame();
+};
+
+
 #endif

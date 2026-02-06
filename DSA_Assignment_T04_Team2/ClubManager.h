@@ -10,6 +10,7 @@ private:
     MemberHash memberTable;  // Managed by Student A's Hash Table
     int nextMemberNo;
     int displayLimit = 10;
+	GameHistory history; // Newly Added
 
 public:
     ClubManager();
@@ -30,6 +31,10 @@ public:
 	void saveGames(string filename);
     Game* findGame(const string& gName);
     Member* getMember(const string& mID);
+	void recordGamePlay();   // Newly Added
+	void searchGameHistory(string gameName); // Newly Added
+	void sortGameHistory();  // Newly Added
+
 
     // --- Student C Tasks (Search, Sort, Ratings) ---
     // Student C ToDo: Copy GameList to a temporary Array and implement MergeSort or QuickSort
