@@ -1,5 +1,29 @@
 #include "Game.h"
 #include <iostream>
+
+bool equalsIgnoreCase(const string& a, const string& b) {
+    if (a.length() != b.length()) return false;
+
+    for (int i = 0; i < a.length(); i++) {
+        char ca = a[i];
+        char cb = b[i];
+
+        if (ca >= 'A' && ca <= 'Z') ca += 32;
+        if (cb >= 'A' && cb <= 'Z') cb += 32;
+
+        if (ca != cb) return false;
+    }
+    return true;
+}
+string toLower(string s) {
+    for (int i = 0; i < s.length(); i++) {
+        if (s[i] >= 'A' && s[i] <= 'Z')
+            s[i] = s[i] + 32;
+    }
+    return s;
+}
+
+
 Game::Game() {
     name = "";
     minPlayers = maxPlayers = 0;
@@ -73,7 +97,7 @@ void Game::display() {
 GameList::GameList() { head = nullptr; size = 0; }
 
 // Student A ToDo: Insert a new GameNode at the end of the list
-void GameList::add(Game g) {
+void GameList::add(const Game& g) {
     GameNode* newNode = new GameNode(g);
     //newNode->data = g;
     //newNode->next = nullptr;
@@ -117,7 +141,8 @@ Game* GameList::find(string name) {
     // Traverse list and return pointer to Game if found
     GameNode* temp = head;
     while (temp != nullptr) {
-        if (temp->data.getName() == name) return &(temp->data);
+        if (equalsIgnoreCase(temp->data.getName(), name))
+            return &(temp->data);
         temp = temp->next;
     }
     return nullptr;
@@ -127,8 +152,11 @@ Game* GameList::find(string name) {
 Game* GameList::findAvailableCopy(string name) {
     GameNode* temp = head;
     while (temp) {
-        if (temp->data.getName() == name && !temp->data.getIsBorrowed())
+        if (equalsIgnoreCase(temp->data.getName(), name) &&
+            !temp->data.getIsBorrowed())
+        {
             return &(temp->data);
+        }
         temp = temp->next;
     }
     return nullptr;
@@ -138,8 +166,11 @@ Game* GameList::findAvailableCopy(string name) {
 Game* GameList::findBorrowedCopy(string name) {
     GameNode* temp = head;
     while (temp) {
-        if (temp->data.getName() == name && temp->data.getIsBorrowed())
+        if (equalsIgnoreCase(temp->data.getName(), name) &&
+            temp->data.getIsBorrowed())
+        {
             return &(temp->data);
+        }
         temp = temp->next;
     }
     return nullptr;
@@ -148,6 +179,22 @@ Game* GameList::findBorrowedCopy(string name) {
 // ------------------- Reviews -------------------
 
 void Game::addReview(const string& mID, const string& mName, int rating, const string& comment) {
+    
+    int index = findReviewIndexByMember(mID);
+
+    if (index != -1) {
+        // Update existing review
+        totalRating -= reviews[index].rating;  // remove old rating
+        reviews[index].rating = rating;
+        reviews[index].comment = comment;
+        totalRating += rating;
+
+        avgRating = totalRating / ratingCount;
+
+        cout << "Review updated successfully.\n";
+        return;
+    }
+
     if (reviewCount < MAX_REVIEWS) {
         reviews[reviewCount].memberID = mID;
         reviews[reviewCount].memberName = mName;
@@ -172,6 +219,15 @@ void Game::displayReviews() const {
             << reviews[i].rating << "/10: " << reviews[i].comment << endl;
     }
 }
+
+int Game::findReviewIndexByMember(const string& memberID) const {
+    for (int i = 0; i < reviewCount; i++) {
+        if (reviews[i].memberID == memberID)
+            return i;
+    }
+    return -1;
+}
+
 
 // Student A ToDo: Destructor to delete all nodes and prevent memory leaks
 GameList::~GameList() {
@@ -221,9 +277,9 @@ void GameHistory::addRecord(GamePlayRecord r) {
 void GameHistory::searchByGame(string name) {
     HistoryNode* curr = head;
     bool found = false;
-
+    string searchName = toLower(name);
     while (curr) {
-        if (curr->data.gameName == name) {
+        if (toLower(curr->data.gameName) == searchName) {
             found = true;
             cout << "\nGame: " << curr->data.gameName << endl;
             cout << "Players: ";

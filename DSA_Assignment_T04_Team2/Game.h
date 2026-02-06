@@ -8,7 +8,7 @@ using namespace std;
 const int MAX_PLAYERS = 6;  //New
 const int MAX_RECORDS = 200; //New
 
-const int MAX_REVIEWS = 1000;
+const int MAX_REVIEWS = 10;
 
 struct Review {
     string memberID;
@@ -66,6 +66,7 @@ public:
     //Review functions
     void addReview(const string& mID, const string& mName, int rating, const string& comment);
     void displayReviews() const;
+    int findReviewIndexByMember(const string& memberID) const;
 };
 
 class GameNode {
@@ -90,7 +91,7 @@ private:
 public:
     GameList();
     ~GameList();
-    void add(Game g);
+    void add(const Game& g);
     void remove(string name);
     // Student A ToDo: Find a game by name (Linear Search)
     Game* find(string name);
@@ -124,6 +125,7 @@ public:
     void displayAll();
     void searchByGame(string gameName);
     void bubbleSortByGame();
+    HistoryNode* getHead() { return head; }
 };
 
 
