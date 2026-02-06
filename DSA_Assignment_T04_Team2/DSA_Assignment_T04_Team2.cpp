@@ -166,6 +166,7 @@ int main() {
             }
             //Newly added
 			else if (subChoice == 4) {
+                cin.ignore();
 				string gName;
 				cout << "Enter game name to search history: ";
 				getline(cin, gName);
