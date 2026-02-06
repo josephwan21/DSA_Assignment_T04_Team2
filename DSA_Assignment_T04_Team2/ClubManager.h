@@ -19,7 +19,7 @@ public:
     // Student B ToDo: Open games.csv, parse lines using stringstream, and populate allGames
     void loadData(string filename);
     void loadMembers(string filename);
-    void saveMembers(string filename);
+    void loadGameHistory(const string& filename);
     // Student B ToDo: Implementation for Borrow/Return logic
     void borrowGame(string mID, string gName);
     void addGame(Game g);
@@ -29,6 +29,8 @@ public:
     void displayAdminSummary();
     void displayMemberSummary(string mID);
 	void saveGames(string filename);
+    void saveMembers(string filename);
+    void saveGameHistory(const string& filename);
     Game* findGame(const string& gName);
     Member* getMember(const string& mID);
 	void recordGamePlay();   // Newly Added

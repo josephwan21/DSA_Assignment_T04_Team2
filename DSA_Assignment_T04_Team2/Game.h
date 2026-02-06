@@ -124,6 +124,7 @@ public:
     void displayAll();
     void searchByGame(string gameName);
     void bubbleSortByGame();
+    HistoryNode* getHead() { return head; }
 };
 
 
