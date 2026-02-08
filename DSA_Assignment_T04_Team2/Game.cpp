@@ -206,7 +206,7 @@ Return: void
 void GameList::remove(string name) {
     if (!head) return;
 
-    if (head->data.getName() == name) {
+    if (equalsIgnoreCase(head->data.getName(), name)) {
         GameNode* toDelete = head;
         head = head->next;
         delete toDelete;
@@ -215,7 +215,7 @@ void GameList::remove(string name) {
     }
 
     GameNode* temp = head;
-    while (temp->next != nullptr && temp->next->data.getName() != name) {
+    while (temp->next != nullptr && !equalsIgnoreCase(temp->next->data.getName(), name)) {
         temp = temp->next;
     }
 
@@ -307,7 +307,10 @@ void Game::addReview(const string& mID, const string& mName, int rating, const s
         reviews[index].comment = comment;
         totalRating += rating;
 
-        avgRating = totalRating / ratingCount;
+        if (reviewCount > 0)
+            avgRating = static_cast<double>(totalRating) / reviewCount;
+        else
+            avgRating = 0.0;
 
         cout << "Review updated successfully.\n";
         return;
@@ -318,7 +321,9 @@ void Game::addReview(const string& mID, const string& mName, int rating, const s
         reviews[reviewCount].memberName = mName;
         reviews[reviewCount].rating = rating;
         reviews[reviewCount].comment = comment;
+        totalRating += rating;
         reviewCount++;
+        avgRating = static_cast<double>(totalRating) / reviewCount;
     }
     else {
         cout << "Max reviews reached for " << name << endl;

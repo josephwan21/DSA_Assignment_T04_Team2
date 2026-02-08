@@ -322,11 +322,45 @@ void handleAddGame(ClubManager& manager) {
 
     cin.ignore();
     cout << "Enter game name: "; getline(cin, name);
+
+    if (name.empty()) {
+        cout << "Game name cannot be empty.\n";
+        return;
+    }
+
+    if (manager.findGame(name) != nullptr) {
+        cout << "Game \"" << name << "\" already exists.\n";
+        return;
+    }
+
     cout << "Min players: "; cin >> minP;
     cout << "Max players: "; cin >> maxP;
+
+    if (cin.fail() || minP <= 0 || maxP <= 0 || minP > maxP) {
+        cin.clear();
+        cin.ignore();
+        cout << "Invalid player count.\n";
+        return;
+    }
+
     cout << "Min playtime: "; cin >> minT;
     cout << "Max playtime: "; cin >> maxT;
+
+    if (cin.fail() || minT <= 0 || maxT <= 0 || minT > maxT) {
+        cin.clear();
+        cin.ignore();
+        cout << "Invalid playtime range.\n";
+        return;
+    }
+
     cout << "Year published: "; cin >> year;
+
+    if (cin.fail() || year < 1000 || year > 9999) {
+        cin.clear();
+        cin.ignore();
+        cout << "Invalid year.\n";
+        return;
+    }
 
     Game g(name, minP, maxP, minT, maxT, year, 0, false);
     manager.addGame(g);
