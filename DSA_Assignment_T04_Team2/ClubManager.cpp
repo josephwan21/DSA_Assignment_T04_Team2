@@ -80,7 +80,7 @@ void ClubManager::loadData(string filename)
         }
         stringstream ss(line);
         string nameStr = getNextField(ss);
-        string borrowedDate, returnDate, reviewsStr;
+        string borrowedDate, returnDate, reviewsStr, borrowerID;
         int minP, maxP, minT, maxT, year;
         double rating;
         //getline(ss, nameStr, ',');
@@ -93,6 +93,7 @@ void ClubManager::loadData(string filename)
         ss >> rating; ss.ignore();
         getline(ss, borrowedDate, ',');
         getline(ss, returnDate, ',');
+        getline(ss, borrowerID, ',');
         getline(ss, reviewsStr, ',');
 
         bool isBorrowed = !borrowedDate.empty();
@@ -100,6 +101,7 @@ void ClubManager::loadData(string filename)
         Game* g = new Game(name, minP, maxP, minT, maxT, year, rating, isBorrowed);
         g->setBorrowDate(borrowedDate);
         g->setReturnDate(returnDate);
+        g->setBorrowerID(borrowerID);
 
         // Parse reviews if any
         if (!reviewsStr.empty()) {
@@ -217,6 +219,7 @@ void ClubManager::borrowGame(string mID, string gName)
 
     g->setIsBorrowed(true);
     g->setBorrowDate(getCurrentDate());
+    g->setBorrowerID(mID);
     g->setReturnDate("");
     m->borrowGame(g->getName());
     cout << "Success! " << m->getName() << " (Member ID: " <<  mID << ") borrowed " << gName << endl;
@@ -239,6 +242,7 @@ void ClubManager::returnGame(string mID, string gName) {
     g->setIsBorrowed(false);
     g->setBorrowDate("");
     g->setReturnDate(getCurrentDate());
+    g->setBorrowerID("");
     m->returnGame(g->getName());
     cout << "Game returned successfully.\n";
 }
@@ -247,16 +251,27 @@ void ClubManager::returnGame(string mID, string gName) {
 void ClubManager::displayAdminSummary() {
     int borrowed = 0, available = 0;
 
-    GameNode* temp = allGames.get();  // or make head accessible via getter
+    GameNode* temp = allGames.get();
+    cout << "\n--- Admin Summary ---\n";
     while (temp) {
-        if (temp->data.getIsBorrowed())
+        Game& g = temp->data;
+        if (g.getIsBorrowed()) {
             borrowed++;
-        else
-            available++;
+            string borrowerName = "Unknown";
+
+            // Lookup member name if possible
+            Member* memberPtr = memberTable.getMember(g.getBorrowerID());
+            if (memberPtr)
+                borrowerName = memberPtr->getName();
+
+            cout << "\nGame: " << g.getName() << "\n" << "Borrowed by: " << borrowerName << " (ID: " << g.getBorrowerID() << ")\n" << "Borrow date: " << g.getBorrowDate() << endl;
+            cout << "--------------------" << endl;
+        }
+        else {
+            available++;    
+        }
         temp = temp->next;
     }
-
-    cout << "\n--- Admin Summary ---\n";
     cout << "Borrowed games: " << borrowed << endl;
     cout << "Available games: " << available << endl;
 }
@@ -287,7 +302,7 @@ void ClubManager::saveGames(const string filename) {
     }
 
     // Write header
-    file << "name,minplayers,maxplayers,minplaytime,maxplaytime,yearpublished,rating,borroweddate,returndate,reviews\n";
+    file << "name,minplayers,maxplayers,minplaytime,maxplaytime,yearpublished,rating,borroweddate,returndate, borrowerID, reviews\n";
 
     GameNode* temp = allGames.get(); // head of list
     while (temp) {
@@ -315,6 +330,7 @@ void ClubManager::saveGames(const string filename) {
             << g.getAvgRating() << ","
             << g.getBorrowDate() << ","
             << g.getReturnDate() << ","
+            << g.getBorrowerID() << ","
             << reviewsStr << "\n";
 
         temp = temp->next;
