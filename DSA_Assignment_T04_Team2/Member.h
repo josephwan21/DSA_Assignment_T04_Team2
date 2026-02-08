@@ -19,6 +19,15 @@ Nigel (S10262591):
 - Task 4: Create the "Admin Summary" view.
 - Advanced Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
 ------------------------------------------------------------
+Joseph (S10262528)
+- Task 1: Implement the Game and Member classes.
+Game Class: Stores name, player counts, playtimes, year, average rating, and status (Available/Borrowed).
+Member Class: Stores Member ID, name, and an array of currently borrowed games.
+- Task 2: Implement a Hash Table to store Members. This allows O(1) or O(log n) lookup when a member logs in or an admin adds a new member.
+- Task 3: Implement Linear Search or Binary Search (if sorted) to find specific games by name or filter by the number of players.
+- Task 4: Handle the "Display details of a particular game" feature.
+- Additional Feature: Allow members to write a review of the game. Users can read the reviews for a game, and each review shows the member who wrote it and their rating for the game.
+------------------------------------------------------------
 */
 
 #ifndef MEMBER_H

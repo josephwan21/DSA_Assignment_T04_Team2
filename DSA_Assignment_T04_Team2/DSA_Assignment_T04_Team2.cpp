@@ -17,7 +17,16 @@ Nigel (S10262591):
 - Task 2: Implement the Borrow/Return logic to check if a game is available and updating the borroweddate and returndate.
 - Task 3: Implement a Linked List to manage the "Transaction History" (Summary of games borrowed/returned).
 - Task 4: Create the "Admin Summary" view.
-- Advanced Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+- Additional Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+------------------------------------------------------------
+Joseph (S10262528)
+- Task 1: Implement the Game and Member classes.
+Game Class: Stores name, player counts, playtimes, year, average rating, and status (Available/Borrowed).
+Member Class: Stores Member ID, name, and an array of currently borrowed games.
+- Task 2: Implement a Hash Table to store Members. This allows O(1) or O(log n) lookup when a member logs in or an admin adds a new member.
+- Task 3: Implement Linear Search or Binary Search (if sorted) to find specific games by name or filter by the number of players.
+- Task 4: Handle the "Display details of a particular game" feature.
+- Additional Feature: Allow members to write a review of the game. Users can read the reviews for a game, and each review shows the member who wrote it and their rating for the game.
 ------------------------------------------------------------
 */
 
@@ -51,11 +60,37 @@ void displayAdminMenu();
  * Return: void
  */
 void displayMemberMenu();
+/*
+ * Function: clearInput
+ * Description: Clears invalid input from cin to prevent input errors.
+ * Input: None
+ * Return: void
+ */
 void clearInput();
 
 // Admin actions
+/*
+ * Function: handleAddGame
+ * Description: Prompts the admin to input details for a new game and adds it to the ClubManager.
+ * Input: ClubManager& manager - reference to the club manager instance
+ * Return: void
+ */
 void handleAddGame(ClubManager& manager);
+
+/*
+ * Function: handleRemoveGame
+ * Description: Prompts the admin to specify a game to remove from ClubManager.
+ * Input: ClubManager& manager - reference to the club manager instance
+ * Return: void
+ */
 void handleRemoveGame(ClubManager& manager);
+
+/*
+ * Function: handleAddMember
+ * Description: Prompts the admin for a member name, generates a member ID, and adds the member to ClubManager.
+ * Input: ClubManager& manager - reference to the club manager instance
+ * Return: void
+ */
 void handleAddMember(ClubManager& manager);
 
 int main() {
@@ -83,15 +118,15 @@ int main() {
 
                 switch (adminChoice) {
                 case 1:
-                    // // Student A ToDo: manager.addGame(newGame);
+                    // // Joseph ToDo: manager.addGame(newGame);
                     handleAddGame(manager);
                     break;
                 case 2:
-                    // // Student A ToDo: manager.removeGame(gameName);
+                    // // Joseph ToDo: manager.removeGame(gameName);
                     handleRemoveGame(manager);
                     break;
                 case 3:
-                    // // Student A ToDo: manager.addMember(newMember);
+                    // // Joseph ToDo: manager.addMember(newMember);
                     handleAddMember(manager);
                     break;
                 case 4:
