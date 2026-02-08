@@ -41,7 +41,7 @@ const int MAX_PLAYERS = 6;  //New
 const int MAX_RECORDS = 200; //New
 
 const int MAX_REVIEWS = 10;
-
+// -- Joseph Additional Feature --
 struct Review {
     string memberID;
     string memberName;
@@ -104,20 +104,12 @@ public:
     int findReviewIndexByMember(const string& memberID) const;
 };
 
-class GameNode {
-public:
+//Joseph ToDo: Implement a manual Linked List to store Game objects
+struct GameNode {
     Game data;
     GameNode* next;
-
     GameNode(const Game& g) : data(g), next(nullptr) {}
 };
-
-// Joseph ToDo: Implement a manual Linked List to store Game objects
-//struct GameNode {
-//    Game data;
-//    GameNode* next;
-//    GameNode(Game g);
-//};
 
 class GameList {
 private:
@@ -135,7 +127,7 @@ public:
     GameNode* get();
 };
 
-// --- Nigel Advanced Features---
+// --- Nigel Additional Features ---
 //Newly Added Classes and Structs 
 
 /*
