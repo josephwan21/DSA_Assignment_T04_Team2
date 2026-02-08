@@ -17,7 +17,16 @@ Nigel (S10262591):
 - Task 2: Implement the Borrow/Return logic to check if a game is available and updating the borroweddate and returndate.
 - Task 3: Implement a Linked List to manage the "Transaction History" (Summary of games borrowed/returned).
 - Task 4: Create the "Admin Summary" view.
-- Advanced Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+- Additional Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+------------------------------------------------------------
+Joseph (S10262528)
+- Task 1: Implement the Game and Member classes.
+Game Class: Stores name, player counts, playtimes, year, average rating, and status (Available/Borrowed).
+Member Class: Stores Member ID, name, and an array of currently borrowed games.
+- Task 2: Implement a Hash Table to store Members. This allows O(1) or O(log n) lookup when a member logs in or an admin adds a new member.
+- Task 3: Implement Linear Search or Binary Search (if sorted) to find specific games by name or filter by the number of players.
+- Task 4: Handle the "Display details of a particular game" feature.
+- Additional Feature: Allow members to write a review of the game. Users can read the reviews for a game, and each review shows the member who wrote it and their rating for the game.
 ------------------------------------------------------------
 */
 
@@ -52,10 +61,11 @@ private:
     double totalRating;   // Sum of ratings
     Review reviews[MAX_REVIEWS];
     int reviewCount;
+    string borrowerID;
 public:
     Game();
     Game(string n, int minP, int maxP, int minT, int maxT, int year, double r, bool borrowed);
-    // Student A ToDo: Add Getters/Setters for all attributes
+    // Joseph ToDo: Add Getters/Setters for all attributes
 
     // Getters
     string getName();
@@ -66,10 +76,11 @@ public:
     int getYearPublished();
     double getAvgRating();
     bool getIsBorrowed() const;
-    string getBorrowDate() const { return borrowDate; }
-    string getReturnDate() const { return returnDate; }
-    int getReviewCount() const { return reviewCount; }
-    Review getReview(int index) const { return reviews[index]; }
+    string getBorrowDate() const;
+    string getReturnDate() const;
+    string getBorrowerID() const;
+    int getReviewCount() const;
+    Review getReview(int index) const;
 
     // Setters
     void setName(string n);
@@ -79,8 +90,9 @@ public:
     void setMaxPlaytime(int t);
     void setYearPublished(int y);
     void setIsBorrowed(bool status);
-    void setBorrowDate(string date) { borrowDate = date; }
-    void setReturnDate(string date) { returnDate = date; }
+    void setBorrowDate(string date);
+    void setReturnDate(string date);
+    void setBorrowerID(const string& id);
 
     // Rating functions
     void addRating(int score);
@@ -100,7 +112,7 @@ public:
     GameNode(const Game& g) : data(g), next(nullptr) {}
 };
 
-// Student A ToDo: Implement a manual Linked List to store Game objects
+// Joseph ToDo: Implement a manual Linked List to store Game objects
 //struct GameNode {
 //    Game data;
 //    GameNode* next;
@@ -116,7 +128,7 @@ public:
     ~GameList();
     void add(const Game& g);
     void remove(string name);
-    // Student A ToDo: Find a game by name (Linear Search)
+    // Joseph ToDo: Find a game by name (Linear Search)
     Game* find(string name);
     Game* findAvailableCopy(string name); // Find first available copy
     Game* findBorrowedCopy(string name);  // Find first borrowed copy

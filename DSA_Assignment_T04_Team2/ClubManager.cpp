@@ -17,7 +17,16 @@ Nigel (S10262591):
 - Task 2: Implement the Borrow/Return logic to check if a game is available and updating the borroweddate and returndate.
 - Task 3: Implement a Linked List to manage the "Transaction History" (Summary of games borrowed/returned).
 - Task 4: Create the "Admin Summary" view.
-- Advanced Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+- Additional Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+------------------------------------------------------------
+Joseph (S10262528)
+- Task 1: Implement the Game and Member classes.
+Game Class: Stores name, player counts, playtimes, year, average rating, and status (Available/Borrowed).
+Member Class: Stores Member ID, name, and an array of currently borrowed games.
+- Task 2: Implement a Hash Table to store Members. This allows O(1) or O(log n) lookup when a member logs in or an admin adds a new member.
+- Task 3: Implement Linear Search or Binary Search (if sorted) to find specific games by name or filter by the number of players.
+- Task 4: Handle the "Display details of a particular game" feature.
+- Additional Feature: Allow members to write a review of the game. Users can read the reviews for a game, and each review shows the member who wrote it and their rating for the game.
 ------------------------------------------------------------
 */
 
@@ -28,11 +37,16 @@ Nigel (S10262591):
 #include <iomanip>
 using namespace std;
 
-
+/*
+Function: getCurrentDate - Helper Function
+Description: Gets the current date via "ctime"
+Input: None
+Return: string
+*/
 string getCurrentDate() {
     time_t t = time(nullptr);
-    tm now{}; // note: initialize to zero
-    localtime_s(&now, &t); // safe version
+    tm now{}; 
+    localtime_s(&now, &t);
 
     stringstream ss;
     ss << (now.tm_year + 1900) << "-"        // year
@@ -43,17 +57,35 @@ string getCurrentDate() {
 
 
 // --- Nigel Tasks: File I/O & Transactions ---
+/*
+ * Function: ClubManager::ClubManager
+ * Description: Constructor for the ClubManager class. Initializes the next member number.
+ * Input: None
+ * Return: None
+ */
 ClubManager::ClubManager()
 {
     nextMemberNo = 1000;
 }
 
+/*
+ * Function: trimQuotes
+ * Description: Removes surrounding double quotes from a string, if present.
+ * Input: const string& s - the input string
+ * Return: string - the trimmed string without surrounding quotes
+ */
 string trimQuotes(const string& s) {
     if (s.size() >= 2 && s.front() == '"' && s.back() == '"')
         return s.substr(1, s.size() - 2);
     return s;
 }
 
+/*
+ * Function: getNextField
+ * Description: Extracts the next field from a CSV-formatted stringstream, handling quoted fields.
+ * Input: stringstream& ss - the stringstream containing CSV data
+ * Return: string - the next field as a string
+ */
 string getNextField(stringstream& ss) {
     string field;
     if (ss.peek() == '"') { // field starts with a quote
@@ -67,6 +99,12 @@ string getNextField(stringstream& ss) {
     return field;
 }
 // Nigel ToDo: Read games.csv line by line using stringstream
+/*
+Function: loadData
+Description: Loads game data from a CSV file into the system, including reviews and borrow info.
+Input: string filename – CSV file to read from
+Return: void
+*/
 void ClubManager::loadData(string filename)
 {
     // 1. Open file using ifstream
@@ -87,7 +125,7 @@ void ClubManager::loadData(string filename)
         }
         stringstream ss(line);
         string nameStr = getNextField(ss);
-        string borrowedDate, returnDate, reviewsStr;
+        string borrowedDate, returnDate, reviewsStr, borrowerID;
         int minP, maxP, minT, maxT, year;
         double rating;
         //getline(ss, nameStr, ',');
@@ -100,6 +138,7 @@ void ClubManager::loadData(string filename)
         ss >> rating; ss.ignore();
         getline(ss, borrowedDate, ',');
         getline(ss, returnDate, ',');
+        getline(ss, borrowerID, ',');
         getline(ss, reviewsStr, ',');
 
         bool isBorrowed = !borrowedDate.empty();
@@ -107,6 +146,7 @@ void ClubManager::loadData(string filename)
         Game* g = new Game(name, minP, maxP, minT, maxT, year, rating, isBorrowed);
         g->setBorrowDate(borrowedDate);
         g->setReturnDate(returnDate);
+        g->setBorrowerID(borrowerID);
 
         // Parse reviews if any
         if (!reviewsStr.empty()) {
@@ -130,6 +170,12 @@ void ClubManager::loadData(string filename)
 
 }
 
+/*
+Function: loadMembers
+Description: Loads member data from a CSV file into the member hash table.
+Input: string filename – CSV file to read from
+Return: void
+*/
 void ClubManager::loadMembers(string filename) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -163,6 +209,12 @@ void ClubManager::loadMembers(string filename) {
     file.close();
 }
 
+/*
+Function: loadGameHistory
+Description: Loads game play history from a CSV file into the history linked list.
+Input: string filename – CSV file to read from
+Return: void
+*/
 void ClubManager::loadGameHistory(const string& filename) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -204,6 +256,13 @@ void ClubManager::loadGameHistory(const string& filename) {
 
 
 // Nigel ToDo: Update game status and member's borrowed list
+/*
+Function: borrowGame
+Description: Marks a game as borrowed by a member and updates borrow date.
+Input: string mID – member ID
+       string gName – name of game
+Return: void
+*/
 void ClubManager::borrowGame(string mID, string gName)
 {
     // 1. memberTable.getMember(mID)
@@ -224,11 +283,19 @@ void ClubManager::borrowGame(string mID, string gName)
 
     g->setIsBorrowed(true);
     g->setBorrowDate(getCurrentDate());
+    g->setBorrowerID(mID);
     g->setReturnDate("");
     m->borrowGame(g->getName());
     cout << "Success! " << m->getName() << " (Member ID: " <<  mID << ") borrowed " << gName << endl;
 }
 
+/*
+Function: returnGame
+Description: Marks a game as returned and updates return date and borrower info.
+Input: string mID – member ID
+       string gName – name of game
+Return: void
+*/
 
 void ClubManager::returnGame(string mID, string gName) {
     Member* m = memberTable.getMember(mID);
@@ -246,29 +313,53 @@ void ClubManager::returnGame(string mID, string gName) {
     g->setIsBorrowed(false);
     g->setBorrowDate("");
     g->setReturnDate(getCurrentDate());
+    g->setBorrowerID("");
     m->returnGame(g->getName());
     cout << "Game returned successfully.\n";
 }
 
 //Add new function
+/*
+Function: displayAdminSummary
+Description: Displays a summary of all games, showing which are borrowed or available, along with borrower info and borrow dates.
+Input: none
+Return: void
+*/
 void ClubManager::displayAdminSummary() {
     int borrowed = 0, available = 0;
 
-    GameNode* temp = allGames.get();  // or make head accessible via getter
+    GameNode* temp = allGames.get();
+    cout << "\n--- Admin Summary ---\n";
     while (temp) {
-        if (temp->data.getIsBorrowed())
+        Game& g = temp->data;
+        if (g.getIsBorrowed()) {
             borrowed++;
-        else
-            available++;
+            string borrowerName = "Unknown";
+
+            // Lookup member name if possible
+            Member* memberPtr = memberTable.getMember(g.getBorrowerID());
+            if (memberPtr)
+                borrowerName = memberPtr->getName();
+
+            cout << "\nGame: " << g.getName() << "\n" << "Borrowed by: " << borrowerName << " (ID: " << g.getBorrowerID() << ")\n" << "Borrow date: " << g.getBorrowDate() << endl;
+            cout << "--------------------" << endl;
+        }
+        else {
+            available++;    
+        }
         temp = temp->next;
     }
-
-    cout << "\n--- Admin Summary ---\n";
     cout << "Borrowed games: " << borrowed << endl;
     cout << "Available games: " << available << endl;
 }
 
 //Add new function
+/*
+Function: displayMemberSummary
+Description: Displays a summary of a member's details and borrowed games.
+Input: string mID – member ID
+Return: void
+*/
 void ClubManager::displayMemberSummary(string mID) {
     Member* m = memberTable.getMember(mID);
 
@@ -285,6 +376,12 @@ void ClubManager::displayMemberSummary(string mID) {
 }
 
 // Save all game data back to CSV
+/*
+Function: saveGames
+Description: Saves all game data, borrow info, and reviews to a CSV file.
+Input: string filename – CSV file to write to
+Return: void
+*/
 void ClubManager::saveGames(const string filename) {
     ofstream file(filename);
 
@@ -294,7 +391,7 @@ void ClubManager::saveGames(const string filename) {
     }
 
     // Write header
-    file << "name,minplayers,maxplayers,minplaytime,maxplaytime,yearpublished,rating,borroweddate,returndate,reviews\n";
+    file << "name,minplayers,maxplayers,minplaytime,maxplaytime,yearpublished,rating,borroweddate,returndate, borrowerID, reviews\n";
 
     GameNode* temp = allGames.get(); // head of list
     while (temp) {
@@ -322,6 +419,7 @@ void ClubManager::saveGames(const string filename) {
             << g.getAvgRating() << ","
             << g.getBorrowDate() << ","
             << g.getReturnDate() << ","
+            << g.getBorrowerID() << ","
             << reviewsStr << "\n";
 
         temp = temp->next;
@@ -331,6 +429,12 @@ void ClubManager::saveGames(const string filename) {
     cout << "Games saved successfully to " << filename << "\n";
 }
 
+/*
+Function: saveMembers
+Description: Saves all member data to a CSV file.
+Input: string filename – CSV file to write to
+Return: void
+*/
 void ClubManager::saveMembers(string filename) {
     ofstream file(filename);
     if (!file.is_open()) {
@@ -354,6 +458,12 @@ void ClubManager::saveMembers(string filename) {
     cout << "Members saved successfully to " << filename << "\n";
 }
 
+/*
+Function: saveGameHistory
+Description: Saves recorded game play sessions to a CSV file.
+Input: string filename – CSV file to save to
+Return: void
+*/
 void ClubManager::saveGameHistory(const string& filename) {
     ofstream file(filename);
     if (!file.is_open()) {
@@ -584,11 +694,11 @@ void ClubManager::searchByPlayers(int count) {
 /*
  * Function: rateGame
  * Description: Allows a member to rate a game (1-10) and recalculates the game's average rating.
- * Input: string gName - name of game, int score - rating score.
+ * Input: string gName - name of game, string mID - member ID of the member rating the game
  * Return: void
  */
 void ClubManager::rateGame(string gName, string mID) {
-    // Find the game using Student A's search function
+    // Find the game using Joseph's search function
     Game* g = allGames.find(gName);
     Member* m = memberTable.getMember(mID);
 
@@ -604,7 +714,9 @@ void ClubManager::rateGame(string gName, string mID) {
     int score;
     cout << "Enter rating (1-10): ";
     cin >> score;
-    if (score < 1 || score > 10) {
+    if (cin.fail() || score < 1 || score > 10) {
+        cin.clear();
+        cin.ignore();
         cout << "Invalid rating. Please enter a score between 1 and 10.\n";
         return;
     }
@@ -699,17 +811,34 @@ void ClubManager::sortGameHistory() {
 }
 /////////////////////////////////////
 
-
+/*
+Function: addGame
+Description: Adds a new game to the game list.
+Input: const Game& g – game object to add
+Return: void
+*/
 void ClubManager::addGame(const Game& g) {
     allGames.add(g);
     cout << "Game added successfully.\n";
 }
 
+/*
+Function: addMember
+Description: Adds a new member to the member hash table.
+Input: Member m – member object to add
+Return: void
+*/
 void ClubManager::addMember(Member m) {
     memberTable.addMember(m);
     cout << "Member added successfully.\n";
 }
 
+/*
+Function: removeGame
+Description: Removes a game from the game list if it exists.
+Input: string gName – name of the game to remove
+Return: void
+*/
 void ClubManager::removeGame(string gName) {
     if (allGames.find(gName) == nullptr) {
         cout << "Game does not exist.\n";
@@ -720,14 +849,33 @@ void ClubManager::removeGame(string gName) {
     }    
 }
 
+/*
+Function: findGame
+Description: Finds a game by name in the game list.
+Input: string gName – name of the game
+Return: Game* – pointer to game if found, nullptr otherwise
+*/
 Game* ClubManager::findGame(const string& gName) {
     return allGames.find(gName);
 }
 
+/*
+Function: generateMemberID
+Description: Generates a new unique member ID.
+Input: none
+Return: string – new member ID
+*/
 string ClubManager::generateMemberID() {
     return "M" + to_string(nextMemberNo++);
 }
 
+
+/*
+Function: getMember
+Description: Retrieves a member from the member table by ID.
+Input: string mID – member ID
+Return: Member* – pointer to member if found, nullptr otherwise
+*/
 Member* ClubManager::getMember(const string& mID) {
     return memberTable.getMember(mID);
 }
