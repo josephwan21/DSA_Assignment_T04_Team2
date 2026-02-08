@@ -78,6 +78,11 @@ int Game::getMaxPlaytime() { return maxPlaytime; }
 int Game::getYearPublished() { return yearPublished; }
 double Game::getAvgRating() { return avgRating; }
 bool Game::getIsBorrowed() const { return isBorrowed; }
+string Game::getBorrowDate() const { return borrowDate; }
+string Game::getReturnDate() const { return returnDate; }
+string Game::getBorrowerID() const { return borrowerID; }
+int Game::getReviewCount() const { return reviewCount; }
+Review Game::getReview(int index) const { return reviews[index]; }
 
 // Setters
 void Game::setName(string n) { name = n; }
@@ -87,6 +92,9 @@ void Game::setMinPlaytime(int t) { minPlaytime = t; }
 void Game::setMaxPlaytime(int t) { maxPlaytime = t; }
 void Game::setYearPublished(int y) { yearPublished = y; }
 void Game::setIsBorrowed(bool status) { isBorrowed = status; }
+void Game::setBorrowDate(string date) { borrowDate = date; }
+void Game::setReturnDate(string date) { returnDate = date; }
+void Game::setBorrowerID(const string& id) { borrowerID = id; }
 
 // Add Rating
 void Game::addRating(int score) {

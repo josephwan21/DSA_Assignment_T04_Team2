@@ -45,6 +45,7 @@ private:
     double totalRating;   // Sum of ratings
     Review reviews[MAX_REVIEWS];
     int reviewCount;
+    string borrowerID;
 public:
     Game();
     Game(string n, int minP, int maxP, int minT, int maxT, int year, double r, bool borrowed);
@@ -59,10 +60,11 @@ public:
     int getYearPublished();
     double getAvgRating();
     bool getIsBorrowed() const;
-    string getBorrowDate() const { return borrowDate; }
-    string getReturnDate() const { return returnDate; }
-    int getReviewCount() const { return reviewCount; }
-    Review getReview(int index) const { return reviews[index]; }
+    string getBorrowDate() const;
+    string getReturnDate() const;
+    string getBorrowerID() const;
+    int getReviewCount() const;
+    Review getReview(int index) const;
 
     // Setters
     void setName(string n);
@@ -72,8 +74,9 @@ public:
     void setMaxPlaytime(int t);
     void setYearPublished(int y);
     void setIsBorrowed(bool status);
-    void setBorrowDate(string date) { borrowDate = date; }
-    void setReturnDate(string date) { returnDate = date; }
+    void setBorrowDate(string date);
+    void setReturnDate(string date);
+    void setBorrowerID(const string& id);
 
     // Rating functions
     void addRating(int score);
