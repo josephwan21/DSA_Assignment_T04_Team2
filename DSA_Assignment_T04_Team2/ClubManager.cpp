@@ -12,6 +12,13 @@ Jayme (S10257137):
 - Task 4: Implemented "Rate a Game" logic with dynamic average rating recalculation.
 - Additional Feature: Added custom settings for display limits and paging logic.
 ------------------------------------------------------------
+Nigel (S10262591):
+- Task 1: Create the CSV Parser to read/write games.csv.
+- Task 2: Implement the Borrow/Return logic to check if a game is available and updating the borroweddate and returndate.
+- Task 3: Implement a Linked List to manage the "Transaction History" (Summary of games borrowed/returned).
+- Task 4: Create the "Admin Summary" view.
+- Advanced Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+------------------------------------------------------------
 */
 
 #include "ClubManager.h"
@@ -35,7 +42,7 @@ string getCurrentDate() {
 }
 
 
-// --- Student B Tasks: File I/O & Transactions ---
+// --- Nigel Tasks: File I/O & Transactions ---
 ClubManager::ClubManager()
 {
     nextMemberNo = 1000;
@@ -59,7 +66,7 @@ string getNextField(stringstream& ss) {
     }
     return field;
 }
-// Student B ToDo: Read games.csv line by line using stringstream
+// Nigel ToDo: Read games.csv line by line using stringstream
 void ClubManager::loadData(string filename)
 {
     // 1. Open file using ifstream
@@ -198,7 +205,7 @@ void ClubManager::loadGameHistory(const string& filename) {
 
 
 
-// Student B ToDo: Update game status and member's borrowed list
+// Nigel ToDo: Update game status and member's borrowed list
 void ClubManager::borrowGame(string mID, string gName)
 {
     // 1. memberTable.getMember(mID)
@@ -636,7 +643,17 @@ void ClubManager::rateGame(string gName, string mID) {
     }
 }
 
-//Newly Added Functions
+
+// --- Nigel Advanced Features (recordGamePlay, searchGameHistory, sortGameHistory) ---
+
+/*
+ * Function: recordGamePlay
+ * Description:
+ * Allows an admin or member to record a game play session,
+ * including players involved and the winner.
+ * Input: None
+ * Return: void
+ */
 void ClubManager::recordGamePlay() {
     GamePlayRecord r;
     string gameName;
@@ -675,10 +692,23 @@ void ClubManager::recordGamePlay() {
     history.addRecord(r);
     cout << "Game play recorded successfully.\n";
 }
+
+/*
+ * Function: searchGameHistory
+ * Description: Searches game history by game name.
+ * Input: string gameName - name of the game to search.
+ * Return: void
+ */
 void ClubManager::searchGameHistory(string gameName) {
     history.searchByGame(gameName);
 }
 
+/*
+ * Function: sortGameHistory
+ * Description: Sorts game history records by game name.
+ * Input: None
+ * Return: void
+ */
 void ClubManager::sortGameHistory() {
     history.bubbleSortByGame();
     cout << "Game history sorted by game name.\n";
