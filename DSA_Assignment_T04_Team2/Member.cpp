@@ -12,6 +12,13 @@ Jayme (S10257137):
 - Task 4: Implemented "Rate a Game" logic with dynamic average rating recalculation.
 - Additional Feature: Added custom settings for display limits and paging logic.
 ------------------------------------------------------------
+Nigel (S10262591):
+- Task 1: Create the CSV Parser to read/write games.csv.
+- Task 2: Implement the Borrow/Return logic to check if a game is available and updating the borroweddate and returndate.
+- Task 3: Implement a Linked List to manage the "Transaction History" (Summary of games borrowed/returned).
+- Task 4: Create the "Admin Summary" view.
+- Advanced Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+------------------------------------------------------------
 */
 
 #include "Member.h"

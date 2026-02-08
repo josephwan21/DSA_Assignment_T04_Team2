@@ -12,6 +12,14 @@ Jayme (S10257137):
 - Task 4: Implemented "Rate a Game" logic with dynamic average rating recalculation.
 - Additional Feature: Added custom settings for display limits and paging logic.
 ------------------------------------------------------------
+Nigel (S10262591):
+- Task 1: Create the CSV Parser to read/write games.csv.
+- Task 2: Implement the Borrow/Return logic to check if a game is available and updating the borroweddate and returndate.
+- Task 3: Implement a Linked List to manage the "Transaction History" (Summary of games borrowed/returned).
+- Task 4: Create the "Admin Summary" view.
+- Advanced Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+------------------------------------------------------------
+
 */
 
 #include "Game.h"
@@ -260,10 +268,25 @@ GameNode* GameList::get() {
 }
 
 
-//Newly Added GameHistory Implementation (Record Play of Game)//
+//--- Nigel Advanced Features (GameHistory, addRecord, searchByGame, bubbleSortByGame, displayAll) ---
+
+/*
+ * Function: GameHistory
+ * Description: Constructor that initializes an empty game history list.
+ * Input: None
+ * Return: None
+ */
+
 GameHistory::GameHistory() {
     head = nullptr;
 }
+
+/*
+ * Function: ~GameHistory
+ * Description: Destructor that frees all nodes in the linked list.
+ * Input: None
+ * Return: None
+ */
 
 GameHistory::~GameHistory() {
     while (head) {
@@ -273,7 +296,12 @@ GameHistory::~GameHistory() {
     }
 }
 
-
+/*
+ * Function: addRecord
+ * Description: Adds a new gameplay record to the end of the linked list.
+ * Input: GamePlayRecord r - record containing gameplay details.
+ * Return: void
+ */
 void GameHistory::addRecord(GamePlayRecord r) {
     HistoryNode* newNode = new HistoryNode;
     newNode->data = r;
@@ -290,6 +318,13 @@ void GameHistory::addRecord(GamePlayRecord r) {
     }
     curr->next = newNode;
 }
+
+/*
+ * Function: searchByGame
+ * Description: Searches and displays gameplay records matching a given game name.
+ * Input: string name - name of the game to search for.
+ * Return: void
+ */
 void GameHistory::searchByGame(string name) {
     HistoryNode* curr = head;
     bool found = false;
@@ -311,7 +346,12 @@ void GameHistory::searchByGame(string name) {
         cout << "No records found for this game.\n";
 }
 
-
+/*
+ * Function: bubbleSortByGame
+ * Description: Sorts the game history records alphabetically by game name.
+ * Input: None
+ * Return: void
+ */
 void GameHistory::bubbleSortByGame() {
     if (!head || !head->next) return;
 
@@ -336,8 +376,12 @@ void GameHistory::bubbleSortByGame() {
     } while (swapped);
 }
 
-
-
+/*
+ * Function: displayAll
+ * Description: Displays all recorded game play history.
+ * Input: None
+ * Return: void
+ */
 void GameHistory::displayAll() {
     HistoryNode* curr = head;
     if (!curr) {

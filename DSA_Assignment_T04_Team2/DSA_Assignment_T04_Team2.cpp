@@ -12,6 +12,13 @@ Jayme (S10257137):
 - Task 4: Implemented "Rate a Game" logic with dynamic average rating recalculation.
 - Additional Feature: Added custom settings for display limits and paging logic.
 ------------------------------------------------------------
+Nigel (S10262591):
+- Task 1: Create the CSV Parser to read/write games.csv.
+- Task 2: Implement the Borrow/Return logic to check if a game is available and updating the borroweddate and returndate.
+- Task 3: Implement a Linked List to manage the "Transaction History" (Summary of games borrowed/returned).
+- Task 4: Create the "Admin Summary" view.
+- Advanced Feature: Allow members to record play of a game + other members who played the game and who won the game + Search game history and Sort game history
+------------------------------------------------------------
 */
 
 #include <iostream>
@@ -54,7 +61,7 @@ void handleAddMember(ClubManager& manager);
 int main() {
     ClubManager manager;
 
-    // // Student B ToDo: manager.loadData("games.csv");
+    // // Nigel ToDo: manager.loadData("games.csv");
     manager.loadData("games.csv");
     manager.loadMembers("members.csv");
     manager.loadGameHistory("game_history.csv");
@@ -88,7 +95,7 @@ int main() {
                     handleAddMember(manager);
                     break;
                 case 4:
-                    // // Student B ToDo: manager.displayAdminSummary();
+                    // // Nigel ToDo: manager.displayAdminSummary();
                     manager.displayAdminSummary();
                     break;
                 case 0:
@@ -133,7 +140,7 @@ int main() {
                 string gameName;
                 switch (memChoice) {
                 case 1: {
-                    // // Student B ToDo: manager.performBorrow(mID, gameName);
+                    // // Nigel ToDo: manager.performBorrow(mID, gameName);
                     cin.ignore();
                     cout << "Enter game name to borrow: ";
                     getline(cin, gameName);
@@ -141,7 +148,7 @@ int main() {
                     break;
                 }
                 case 2: {
-                    // // Student B ToDo: manager.performReturn(mID, gameName);
+                    // // Nigel ToDo: manager.performReturn(mID, gameName);
                     cin.ignore();
                     cout << "Enter game name to return: ";
                     getline(cin, gameName);
@@ -149,7 +156,7 @@ int main() {
                     break;
                 }
                 case 3:
-                    // // Student B ToDo: manager.displayMemberSummary(mID);
+                    // // Nigel ToDo: manager.displayMemberSummary(mID);
                     manager.displayMemberSummary(mID);
                     break;
                 case 4:
