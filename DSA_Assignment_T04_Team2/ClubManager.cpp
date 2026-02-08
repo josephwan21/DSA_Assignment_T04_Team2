@@ -310,6 +310,11 @@ void ClubManager::returnGame(string mID, string gName) {
         return;
     }
 
+    if (g->getBorrowerID() != mID) {
+        cout << "You cannot return a game borrowed by another member.\n";
+        return;
+    }
+
     g->setIsBorrowed(false);
     g->setBorrowDate("");
     g->setReturnDate(getCurrentDate());
@@ -727,10 +732,8 @@ void ClubManager::rateGame(string gName, string mID) {
     getline(cin, comment);
 
     if (g) {
-        g->addRating(score); // Call Game class rating logic
-        if (!comment.empty()) {
-            g->addReview(mID, m->getName(), score, comment);
-        }
+        g->addReview(mID, m->getName(), score, comment);
+        
         cout << "Successfully rated " << gName << " as " << score << "/10!\n";
         cout << "New Average Rating: " << g->getAvgRating() << endl;
     }
