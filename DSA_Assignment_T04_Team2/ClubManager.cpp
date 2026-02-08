@@ -1,3 +1,19 @@
+/*
+------------------------------------------------------------
+T04 Team 2
+Joseph Bacomo Wan Zi Jun S10262528
+Jayme Chua Jie-Ming S10257137
+Nigel Ng Hong Jie S10262591
+
+Jayme (S10257137):
+- Task 1: Designed the Hierarchical Menu System (Admin vs. Member views).
+- Task 2: Utilized an array for temporary game storage to facilitate efficient sorting.
+- Task 3: Implemented QuickSort to sort games by Rating, Year, or Player Count.
+- Task 4: Implemented "Rate a Game" logic with dynamic average rating recalculation.
+- Additional Feature: Added custom settings for display limits and paging logic.
+------------------------------------------------------------
+*/
+
 #include "ClubManager.h"
 #include <fstream>
 #include <sstream>
@@ -360,9 +376,13 @@ void ClubManager::saveGameHistory(const string& filename) {
 
 
 
-// --- Student C Tasks: Sorting & Filtering ---
-
-// Student C ToDo: Implement a Sorting Algorithm (Data Structure 3: Array for Sorting)
+// --- Jayme Tasks: Sorting & Filtering ---
+/*
+ * Function: quickSort
+ * Description: Recursively sorts an array of Game objects using a pivot.
+ * Input: Game* arr - array to sort, int low - starting index, int high - ending index, bool sortByYear - toggle between year or rating sort.
+ * Return: void
+ */
 void quickSort(Game* arr, int low, int high, bool byYear) {
     if (low < high) {
         // Simple partition logic
@@ -388,6 +408,12 @@ void quickSort(Game* arr, int low, int high, bool byYear) {
     }
 }
 
+/*
+ * Function: displaySortedByYear
+ * Description: Copies games to an array, sorts them by year using QuickSort, and displays with paging.
+ * Input: None
+ * Return: void
+ */
 void ClubManager::displaySortedByYear() {
     int count = 0;
     GameNode* temp = allGames.get();
@@ -431,6 +457,12 @@ void ClubManager::displaySortedByYear() {
     delete[] tempArray;
 }
 
+/*
+ * Function: displaySortedByRating
+ * Description: Copies games to an array, sorts them by rating using QuickSort, and displays with paging.
+ * Input: None
+ * Return: void
+ */
 void ClubManager::displaySortedByRating() {
     int count = 0;
     GameNode* temp = allGames.get();
@@ -477,6 +509,12 @@ void ClubManager::displaySortedByRating() {
     delete[] tempArray;
 }
 
+/*
+ * Function: searchByPlayers
+ * Description: Filters games by player count, sorts matches by rating, and displays results with paging.
+ * Input: int count - number of players to search for.
+ * Return: void
+ */
 void ClubManager::searchByPlayers(int count) {
     // 1. First, count how many games match the criteria to allocate array size
     int matchCount = 0;
@@ -536,6 +574,12 @@ void ClubManager::searchByPlayers(int count) {
     delete[] matchArray;
 }
 
+/*
+ * Function: rateGame
+ * Description: Allows a member to rate a game (1-10) and recalculates the game's average rating.
+ * Input: string gName - name of game, int score - rating score.
+ * Return: void
+ */
 void ClubManager::rateGame(string gName, string mID) {
     // Find the game using Student A's search function
     Game* g = allGames.find(gName);

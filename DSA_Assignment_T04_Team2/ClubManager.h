@@ -1,3 +1,19 @@
+/*
+------------------------------------------------------------
+T04 Team 2
+Joseph Bacomo Wan Zi Jun S10262528
+Jayme Chua Jie-Ming S10257137
+Nigel Ng Hong Jie S10262591
+
+Jayme (S10257137):
+- Task 1: Designed the Hierarchical Menu System (Admin vs. Member views).
+- Task 2: Utilized an array for temporary game storage to facilitate efficient sorting.
+- Task 3: Implemented QuickSort to sort games by Rating, Year, or Player Count.
+- Task 4: Implemented "Rate a Game" logic with dynamic average rating recalculation.
+- Additional Feature: Added custom settings for display limits and paging logic.
+------------------------------------------------------------
+*/
+
 #ifndef CLUBMANAGER_H
 #define CLUBMANAGER_H
 #include "Game.h"
@@ -38,11 +54,11 @@ public:
 	void sortGameHistory();  // Newly Added
 
 
-    // --- Student C Tasks (Search, Sort, Ratings) ---
-    // Student C ToDo: Copy GameList to a temporary Array and implement MergeSort or QuickSort
+    // --- Jayme Tasks (Search, Sort, Ratings) ---
+    // Jayme ToDo: Copy GameList to a temporary Array and implement MergeSort or QuickSort
     void displaySortedByYear();
     void displaySortedByRating();
-    // Student C ToDo: Implementation of player count filtering
+    // Jayme ToDo: Implementation of player count filtering
     void searchByPlayers(int count);
     void rateGame(string gName, string mID);
     string generateMemberID();

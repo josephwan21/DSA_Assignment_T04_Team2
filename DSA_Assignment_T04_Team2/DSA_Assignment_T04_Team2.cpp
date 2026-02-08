@@ -1,13 +1,48 @@
+/*
+------------------------------------------------------------
+T04 Team 2
+Joseph Bacomo Wan Zi Jun S10262528
+Jayme Chua Jie-Ming S10257137
+Nigel Ng Hong Jie S10262591
+
+Jayme (S10257137):
+- Task 1: Designed the Hierarchical Menu System (Admin vs. Member views).
+- Task 2: Utilized an array for temporary game storage to facilitate efficient sorting.
+- Task 3: Implemented QuickSort to sort games by Rating, Year, or Player Count.
+- Task 4: Implemented "Rate a Game" logic with dynamic average rating recalculation.
+- Additional Feature: Added custom settings for display limits and paging logic.
+------------------------------------------------------------
+*/
+
 #include <iostream>
 #include <string>
 #include <limits>
 #include "ClubManager.h"
-
+#include <vector>
 using namespace std;
 
-// --- Function Prototypes for Student C ---
+/*
+ * Function: displayMainMenu
+ * Description: Renders the primary entry point for Administrators and Members.
+ * Input: None
+ * Return: void
+ */
 void displayMainMenu();
+
+/*
+ * Function: displayAdminMenu
+ * Description: Renders management options for game and member administration.
+ * Input: None
+ * Return: void
+ */
 void displayAdminMenu();
+
+/*
+ * Function: displayMemberMenu
+ * Description: Renders the interface for members to borrow, return, and rate games.
+ * Input: None
+ * Return: void
+ */
 void displayMemberMenu();
 void clearInput();
 
@@ -118,7 +153,7 @@ int main() {
                     manager.displayMemberSummary(mID);
                     break;
                 case 4:
-                    // // Student C ToDo: manager.rateGame(gameName, score);
+                    // Jayme ToDo: manager.rateGame(gameName, score);
                     cin.ignore();
                     cout << "Enter game name to rate: ";
                     getline(cin, gameName);
@@ -153,9 +188,7 @@ int main() {
                 }
             }
         }
-        else if (mainChoice == 3) { // Universal search/sort
-            // // Student C ToDo: manager.searchByPlayers(count);
-            // // Student C ToDo: manager.displaySortedByRating();
+        else if (mainChoice == 3) {
             cout << "1. Sort by Rating\n2. Sort by Year\n3. Search by Player Count\n4. Search game history\n5. Sort game history\nChoice: ";
             int subChoice; cin >> subChoice;
             if (subChoice == 1) manager.displaySortedByRating();
@@ -164,7 +197,6 @@ int main() {
                 int pCount; cout << "Enter players: "; cin >> pCount;
                 manager.searchByPlayers(pCount);
             }
-            //Newly added
 			else if (subChoice == 4) {
                 cin.ignore();
 				string gName;
