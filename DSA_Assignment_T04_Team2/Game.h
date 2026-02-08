@@ -41,7 +41,7 @@ const int MAX_PLAYERS = 6;  //New
 const int MAX_RECORDS = 200; //New
 
 const int MAX_REVIEWS = 10;
-
+// -- Joseph Additional Feature --
 struct Review {
     string memberID;
     string memberName;
@@ -127,7 +127,7 @@ public:
     GameNode* get();
 };
 
-// --- Nigel Advanced Features---
+// --- Nigel Additional Features ---
 //Newly Added Classes and Structs 
 
 /*
