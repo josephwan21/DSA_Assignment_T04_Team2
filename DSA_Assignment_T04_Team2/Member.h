@@ -43,7 +43,7 @@ private:
     string name;
     string borrowedGames[MAX_BORROWED];
     int borrowedCount;
-    // Student A ToDo: A simple array or list to store borrowed game names
+    // Joseph ToDo: A simple array or list to store borrowed game names
 public:
     Member();
     Member(string id, string n);
@@ -67,7 +67,7 @@ private:
 public:
     MemberHash();
     int hashFunction(string key);
-    // Student A ToDo: Add/Get members using hashing logic
+    // Joseph ToDo: Add/Get members using hashing logic
     void addMember(Member m);
     Member* getMember(string id);
     HashNode** getTable() {

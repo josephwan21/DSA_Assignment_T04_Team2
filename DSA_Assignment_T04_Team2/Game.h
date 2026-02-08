@@ -104,20 +104,12 @@ public:
     int findReviewIndexByMember(const string& memberID) const;
 };
 
-class GameNode {
-public:
+//Joseph ToDo: Implement a manual Linked List to store Game objects
+struct GameNode {
     Game data;
     GameNode* next;
-
     GameNode(const Game& g) : data(g), next(nullptr) {}
 };
-
-// Joseph ToDo: Implement a manual Linked List to store Game objects
-//struct GameNode {
-//    Game data;
-//    GameNode* next;
-//    GameNode(Game g);
-//};
 
 class GameList {
 private:
